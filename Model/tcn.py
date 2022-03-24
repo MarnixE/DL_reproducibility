@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
 from torch.nn.utils import weight_norm
-from torchsummary import summary
 import torch.optim as optim
 
 
@@ -72,15 +71,32 @@ dropout = 0.1
 
 net = TCN_net(n_inputs, n_channels, kernel_size, stride, dropout)
 
-# summary(net, torch.zeros((32,1000))) # (in_channels, height, width)
+def CrossEntropyLoss(y_true, y_pred):
+    
+    # Calculate softmax using previously defined function
+    softmax = Softmax(y_pred)
 
-'''
+    # Convert one-hot vector to class id
+    y_true = torch.argmax(y_true, axis=1)
+    # Get number of samples in batch
+    n = y_true.shape[0]
+    # Calculate cross entropy loss between y_true and y_pred
+    log_likelihood = -torch.log(softmax[torch.arange(n),y_true])
+    # Average over all samples
+    loss = torch.mean(log_likelihood)
+
+    # Caculate the gradient 
+    grad = softmax
+    softmax[torch.arange(n), y_true] -= 1
+    grad /= n
+
+    return loss, grad
+
+
 # Training parameters
 learning_rate = 5e-1  # step size for gradient descent
 epochs = 10  # how many times to iterate through the intire training set
 
-# Initialize network
-net = Net(layers)
 
 # Define list to store loss of each iteration
 train_losses = []
@@ -97,27 +113,11 @@ for epoch in range(epochs):
         # Perform forward pass
         y_pred = net.forward(x_batch)
 
-        ########################################################################
-        #      TODO: Calculate Cross Entropy loss between prediction and       #
-        #                     labels and append to list.                       #
-        ########################################################################
-
-        pass
-
-        ########################################################################
-        #                          END OF YOUR CODE                            #
-        ########################################################################
-
-
-        ########################################################################
-        #            TODO: Perform backward pass and optimizer step.           #
-        ########################################################################
-
-        pass
-
-        ########################################################################
-        #                          END OF YOUR CODE                            #
-        ########################################################################
+        loss, grad = CrossEntropyLoss(y_batch, y_pred)
+        train_losses.append(loss)
+        
+        net.backward(grad)
+        net.optimizer_step(learning_rate)
 
         # Calculate accuracy of prediction
         correct = torch.argmax(y_pred, axis=1) == torch.argmax(y_batch, axis=1)
@@ -131,4 +131,3 @@ for epoch in range(epochs):
 
 
 
-'''
