@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 from torch.nn.utils import weight_norm
 import torch.optim as optim
+import data
 
 
 class Chomp1d(nn.Module):
@@ -108,6 +109,9 @@ epochs = 10  # how many times to iterate through the intire training set
 train_losses = []
 train_accs = []
 
+all_data = data.DataExtraction.extract()
+
+'''
 for epoch in range(epochs):
     # Training loop
     for i, (x_batch, y_batch) in enumerate(train_loader):
@@ -134,6 +138,6 @@ for epoch in range(epochs):
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch + 1, i * len(x_batch), len(train_loader.dataset),
                 100. * i / len(train_loader), loss))
-
+'''
 
 
