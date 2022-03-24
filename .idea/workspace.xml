@@ -4,7 +4,34 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8508442a-3504-41d8-ab63-d3a477d472a0" name="Changes" comment="" />
+    <list default="true" id="8508442a-3504-41d8-ab63-d3a477d472a0" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/model/tcn.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/model/triplet_loss.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/data.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dataset/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/data/dataset/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dataset/kia_soul/Driving Data(KIA SOUL)_(150728-160714)_(10 Drivers_A-J).csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/dataset/kia_soul/Driving Data(KIA SOUL)_(150728-160714)_(10 Drivers_A-J).csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dataset/user_0001/user_0001_highway.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/dataset/user_0001/user_0001_highway.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dataset/user_0001/user_0001_suburban.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/dataset/user_0001/user_0001_suburban.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dataset/user_0001/user_0001_tutorial.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/dataset/user_0001/user_0001_tutorial.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dataset/user_0001/user_0001_urban.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/dataset/user_0001/user_0001_urban.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dataset/user_0002/user_0002_highway.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/dataset/user_0002/user_0002_highway.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dataset/user_0002/user_0002_suburban.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/dataset/user_0002/user_0002_suburban.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dataset/user_0002/user_0002_tutorial.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/dataset/user_0002/user_0002_tutorial.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dataset/user_0002/user_0002_urban.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/dataset/user_0002/user_0002_urban.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dataset/user_0003/user_0003_highway.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/dataset/user_0003/user_0003_highway.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dataset/user_0003/user_0003_suburban.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/dataset/user_0003/user_0003_suburban.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dataset/user_0003/user_0003_tutorial.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/dataset/user_0003/user_0003_tutorial.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dataset/user_0003/user_0003_urban.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/dataset/user_0003/user_0003_urban.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dataset/user_0004/user_0004_highway.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/dataset/user_0004/user_0004_highway.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dataset/user_0004/user_0004_suburban.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/dataset/user_0004/user_0004_suburban.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dataset/user_0004/user_0004_tutorial.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/dataset/user_0004/user_0004_tutorial.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dataset/user_0004/user_0004_urban.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/dataset/user_0004/user_0004_urban.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dataset/user_0005/user_0005_highway.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/dataset/user_0005/user_0005_highway.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dataset/user_0005/user_0005_suburban.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/dataset/user_0005/user_0005_suburban.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dataset/user_0005/user_0005_tutorial.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/dataset/user_0005/user_0005_tutorial.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dataset/user_0005/user_0005_urban.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/dataset/user_0005/user_0005_urban.csv" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -23,6 +50,9 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="ProjectErrors" />
+  </component>
   <component name="ProjectId" id="26eQJP6Jt5YV3ynbUF1D9Ijs1pY" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -38,17 +68,37 @@
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PythonContentEntriesConfigurable" />
+    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Robotics\Courses\DL_reproducibility\data" />
       <recent name="C:\Robotics\Courses\DL_reproducibility\Model" />
       <recent name="C:\Robotics\Courses\DL_reproducibility\utils" />
       <recent name="C:\Robotics\Courses\DL_reproducibility" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.data">
     <configuration name="data" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="DL_reproducibility" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/data" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/data/data.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="tcn" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="DL_reproducibility" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -56,12 +106,12 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/model" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/data.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/model/tcn.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -72,6 +122,8 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.data" />
+        <item itemvalue="Python.tcn" />
         <item itemvalue="Python.data" />
       </list>
     </recent_temporary>
@@ -85,11 +137,23 @@
       <option name="presentableId" value="Default" />
       <updated>1647781500570</updated>
       <workItem from="1647790880810" duration="614000" />
-      <workItem from="1648114053072" duration="2257000" />
+      <workItem from="1648114053072" duration="3064000" />
+      <workItem from="1648117285020" duration="4191000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>
