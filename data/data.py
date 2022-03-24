@@ -68,49 +68,60 @@ class DataExtraction:
         Z = dataset.iloc[:,-1].to_numpy()
         return X, Y, Z
 
+    def TripletDataset(self):
+        anchor = self.extract()
+        neg = None
+        pos = None
 
-class TripletDataset:
-    def __init__(self):
-        self.users = 5
-        self.current_path = os.path.dirname(os.path.realpath(__file__))
-        self.path = self.current_path + r".\dataset\user_000"
-        self.groups = {}
+        for i in range(anchor.shape[0]):
+            loc = anchor.iloc[i,:]
 
-    def extract(self):
-        data = {}
-
-        for i in range(1,self.users+1):
-            local_path = self.path + str(i)
-            filenames = glob.glob(local_path + "\*.csv")
-            road_area = 1
-            dfs = pd.DataFrame()
-            for file in filenames:
-                df = pd.read_csv(file, index_col=0)
-                df['USER'] = pd.Series([i for x in range(len(df.index))], index=df.index)
-                df['ROAD_AREA'] = pd.Series([road_area for x in range(len(df.index))], index=df.index)
-
-                if road_area == 1:
-                    dfs = df
-                else:
-                    dfs = pd.concat([dfs, df])
-
-                road_area += 1
-
-            data[i] = dfs
-        return data
-
-    def create_positive(self):
-        data = self.extract()
-        # A = []      # Anchor
-        # P = []      # Positive
-        # N = []      # Negative
-        # for i in range(self.users):
-        #     pos = data[i].sample(frac=1)
+            user_data = anchor.loc[anchor['USER'] == loc['USER']]
+        return anchor, pos, neg
 
 
+# class TripletDataset:
+#     def __init__(self):
+#         self.users = 5
+#         self.current_path = os.path.dirname(os.path.realpath(__file__))
+#         self.path = self.current_path + r".\dataset\user_000"
+#         self.groups = {}
+#
+#     def extract(self):
+#         data = {}
+#
+#         for i in range(1,self.users+1):
+#             local_path = self.path + str(i)
+#             filenames = glob.glob(local_path + "\*.csv")
+#             road_area = 1
+#             dfs = pd.DataFrame()
+#             for file in filenames:
+#                 df = pd.read_csv(file, index_col=0)
+#                 df['USER'] = pd.Series([i for x in range(len(df.index))], index=df.index)
+#                 df['ROAD_AREA'] = pd.Series([road_area for x in range(len(df.index))], index=df.index)
+#
+#                 if road_area == 1:
+#                     dfs = df
+#                 else:
+#                     dfs = pd.concat([dfs, df])
+#
+#                 road_area += 1
+#
+#             data[i] = dfs
+#         return data
+#
+#     def create_positive(self):
+#         data = self.extract()
+#         A = []      # Anchor
+#         P = []      # Positive
+#         N = []      # Negative
+#         for i in range(self.users):
+#             pos = data[i].sample(frac=1)
 
 
 
-TD = TripletDataset()
+
+
+TD = DataExtraction()
 
 dict = TD.extract()

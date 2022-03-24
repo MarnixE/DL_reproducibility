@@ -4,12 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8508442a-3504-41d8-ab63-d3a477d472a0" name="Changes" comment="Added main and updated the data file">
+    <list default="true" id="8508442a-3504-41d8-ab63-d3a477d472a0" name="Changes" comment="Working on TripletDataset">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Model/triplet_loss.py" beforeDir="false" afterPath="$PROJECT_DIR$/Model/triplet_loss.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/data/data.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/data.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/light_gb.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <list id="af9e3b50-d29d-44c0-aed6-2e0f081a181f" name="Changes by Pavan" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -147,7 +145,7 @@
       <updated>1647781500570</updated>
       <workItem from="1647790880810" duration="614000" />
       <workItem from="1648114053072" duration="3064000" />
-      <workItem from="1648117285020" duration="13627000" />
+      <workItem from="1648117285020" duration="14585000" />
     </task>
     <task id="LOCAL-00001" summary="Relocated dataset and added train / test split">
       <created>1648121631803</created>
@@ -177,7 +175,14 @@
       <option name="project" value="LOCAL" />
       <updated>1648123094758</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Working on TripletDataset">
+      <created>1648131939016</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1648131939016</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -198,6 +203,7 @@
     <MESSAGE value="Relocated dataset and added train / test split" />
     <MESSAGE value="Updated gitignore" />
     <MESSAGE value="Added main and updated the data file" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added main and updated the data file" />
+    <MESSAGE value="Working on TripletDataset" />
+    <option name="LAST_COMMIT_MESSAGE" value="Working on TripletDataset" />
   </component>
 </project>
