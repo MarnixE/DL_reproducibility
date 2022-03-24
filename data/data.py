@@ -1,10 +1,12 @@
 import glob
 import pandas as pd
+import os
 
 class DataExtraction:
     def __init__(self):
         self.users = 5
-        self.path = r".\dataset\user_000"
+        self.current_path = os.path.dirname(os.path.realpath(__file__))
+        self.path = self.current_path + r".\dataset\user_000"
         self.groups = {}
 
     def extract(self):
@@ -47,10 +49,9 @@ class DataExtraction:
 
     def dataset_split(self, drop=None):
         """
-
-        :param drop: 1: Acceleration, 2: distance information, 3: gearbox, 4: lane information, 5: pedals, 6: road angle, 7: speed, 8: turn indicators, 9: uncategorized
-        :return: X: training data, Y: label, Z: road condition
-        """
+                :param drop: 1: Acceleration, 2: distance information, 3: gearbox, 4: lane information, 5: pedals, 6: road angle, 7: speed, 8: turn indicators, 9: uncategorized
+                :return: X: training data, Y: label, Z: road condition
+                """
         dataset = self.extract()
 
         self.grouping()
@@ -66,12 +67,3 @@ class DataExtraction:
         Y = dataset.iloc[:,-2].to_numpy()
         Z = dataset.iloc[:,-1].to_numpy()
         return X, Y, Z
-
-    # def split(self):
-
-
-DE = DataExtraction()
-
-dict = DE.extract()
-
-X,Y,Z = DE.dataset_split(1)
