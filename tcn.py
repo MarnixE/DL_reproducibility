@@ -2,8 +2,10 @@ import torch
 import torch.nn as nn
 from torch.nn.utils import weight_norm
 import torch.optim as optim
-import data
+from data import data
 
+DE = data.DataExtraction()
+data = DE.extract()
 
 class Chomp1d(nn.Module):
     def __init__(self, chomp_size):
