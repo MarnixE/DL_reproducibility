@@ -81,7 +81,7 @@ def CrossEntropyLoss(y_true, y_pred):
     # Get number of samples in batch
     n = y_true.shape[0]
     # Calculate cross entropy loss between y_true and y_pred
-    log_likelihood = -torch.log(softmax[torch.arange(n),y_true])
+    log_likelihood = -torch.log(y_pred[torch.arange(n),y_true])
     # Average over all samples
     loss = torch.mean(log_likelihood)
 
@@ -91,6 +91,12 @@ def CrossEntropyLoss(y_true, y_pred):
     grad /= n
 
     return loss, grad
+
+def Softmax(z):
+    exps = torch.exp(z)
+    p = exps / torch.sum(exps, axis=1, keepdim=True)
+
+    return p
 
 
 # Training parameters
