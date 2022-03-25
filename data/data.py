@@ -6,7 +6,7 @@ class DataExtraction:
     def __init__(self):
         self.users = 5
         self.current_path = os.path.dirname(os.path.realpath(__file__))
-        self.path = self.current_path + r".\dataset\user_000"
+        self.path = self.current_path + r"/dataset/user_000"
         self.groups = {}
 
     def extract(self):
@@ -14,7 +14,7 @@ class DataExtraction:
 
         for i in range(self.users):
             local_path = self.path + str(i)
-            filenames = glob.glob(local_path + "\*.csv")
+            filenames = glob.glob(local_path + "/*.csv")
             road_area = 1
             for file in filenames:
                 df = pd.read_csv(file,index_col=0)
