@@ -6,7 +6,8 @@ class DataExtraction:
     def __init__(self):
         self.users = 5
         self.current_path = os.path.dirname(os.path.realpath(__file__))
-        self.path = self.current_path + r"/dataset/user_000"
+        #Path definition is different in Linux, change to "\" for Windows, need to rewrite code
+        self.path = self.current_path + r"/dataset/user_000"    
         self.groups = {}
 
     def extract(self):
