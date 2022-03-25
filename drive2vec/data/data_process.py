@@ -1,12 +1,12 @@
-from drive2vec.model import data_process
+from data import DataExtraction
 import pandas as pd
 import torch
+from IPython.display import display
 
-
-class DataProcess(data):
+class DataProcess(DataExtraction):
     def __init__(self):
-        data_loader = data.DataExtraction()
-        self.all_data = data_loader.extract()
+        self.all_data = DataExtraction().extract()
+        #display(self.all_data)
 
     def train_data(self):
         x = self.all_data.iloc[:, 0:38].values

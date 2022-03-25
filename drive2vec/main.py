@@ -1,8 +1,7 @@
-from model import data_process
 from model import tcn
-from utils import *
+from data import data_process
 import pandas as pd
-from IPython.display import display
+
 
 # Model parameters
 n_inputs = 32
@@ -19,7 +18,6 @@ model = tcn.TCN_net(n_inputs, n_channels, kernel_size, stride, dropout)
 # Load data
 dp = data_process.DataProcess()
 x_train, y_train = dp.train_data()
-
 
 # Training parameters
 learning_rate = 5e-1  # step size for gradient descent
