@@ -1,0 +1,20 @@
+from .model import data_process
+import pandas as pd
+import torch
+
+
+class DataProcess(data):
+    def __init__(self):
+        data_loader = data.DataExtraction()
+        self.all_data = data_loader.extract()
+
+    def train_data(self):
+        x = self.all_data.iloc[:, 0:38].values
+        y = self.all_data.iloc[:, 38].values
+
+        self.x_train = torch.tensor(x)
+        self.y_train = torch.tensor(y)
+
+        return self.x_train, self.y_train
+
+
