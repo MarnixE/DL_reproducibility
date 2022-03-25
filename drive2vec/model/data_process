@@ -1,4 +1,4 @@
-from .model import data_process
+from drive2vec.model import data_process
 import pandas as pd
 import torch
 
