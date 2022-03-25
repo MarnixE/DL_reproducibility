@@ -42,6 +42,8 @@ class TCN_block(nn.Module):
         return self.relu(out + res)
 
 
+
+
 class TCN_net(nn.Module):
     def __init__(self, n_inputs, n_channels, kernel_size, stride, dropout):
         super(TCN_net, self).__init__()
@@ -61,6 +63,8 @@ class TCN_net(nn.Module):
 
         self.network = nn.Sequential(*layers)
 
+    def forward(self, x):
+        return self.network(x)
 
 
 def CrossEntropyLoss(y_true, y_pred):
