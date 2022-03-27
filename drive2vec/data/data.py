@@ -1,13 +1,13 @@
 import glob
 import pandas as pd
 import os
+from random import choice, randint, seed
 
 class DataExtraction:
     def __init__(self):
         self.users = 5
         self.current_path = os.path.dirname(os.path.realpath(__file__))
-        #Path definition is different in Linux, change to "\" for Windows, need to rewrite code
-        self.path = self.current_path + r"/dataset/user_000"    
+        self.path = self.current_path + r".\dataset\user_000"
         self.groups = {}
 
     def extract(self):
@@ -15,7 +15,7 @@ class DataExtraction:
 
         for i in range(self.users):
             local_path = self.path + str(i)
-            filenames = glob.glob(local_path + "/*.csv")
+            filenames = glob.glob(local_path + "\*.csv")
             road_area = 1
             for file in filenames:
                 df = pd.read_csv(file,index_col=0)
@@ -71,58 +71,94 @@ class DataExtraction:
 
     def TripletDataset(self):
         anchor = self.extract()
-        neg = None
-        pos = None
+        pos = pd.DataFrame()
+        neg = pd.DataFrame()
+
 
         for i in range(anchor.shape[0]):
             loc = anchor.iloc[i,:]
 
-            user_data = anchor.loc[anchor['USER'] == loc['USER']]
+            temp = anchor
+            temp = temp.drop(temp.iloc[i,:])
+
+            pos_data = temp.loc[temp['USER'] == loc['USER']]
+            neg_data = temp.loc[temp['USER'] == loc['USER']]
+
+            rnd = randint(0,pos_data.shape[0]-1)
+            n_rnd = randint(0,neg_data.shape[0]-1,)
+
+            pos = pos.append(pos_data.iloc[rnd,:])
+            neg = neg.append(neg_data.iloc[n_rnd,:])
         return anchor, pos, neg
 
 
-# class TripletDataset:
-#     def __init__(self):
-#         self.users = 5
-#         self.current_path = os.path.dirname(os.path.realpath(__file__))
-#         self.path = self.current_path + r".\dataset\user_000"
-#         self.groups = {}
-#
-#     def extract(self):
-#         data = {}
-#
-#         for i in range(1,self.users+1):
-#             local_path = self.path + str(i)
-#             filenames = glob.glob(local_path + "\*.csv")
-#             road_area = 1
-#             dfs = pd.DataFrame()
-#             for file in filenames:
-#                 df = pd.read_csv(file, index_col=0)
-#                 df['USER'] = pd.Series([i for x in range(len(df.index))], index=df.index)
-#                 df['ROAD_AREA'] = pd.Series([road_area for x in range(len(df.index))], index=df.index)
-#
-#                 if road_area == 1:
-#                     dfs = df
-#                 else:
-#                     dfs = pd.concat([dfs, df])
-#
-#                 road_area += 1
-#
-#             data[i] = dfs
-#         return data
-#
-#     def create_positive(self):
-#         data = self.extract()
-#         A = []      # Anchor
-#         P = []      # Positive
-#         N = []      # Negative
-#         for i in range(self.users):
-#             pos = data[i].sample(frac=1)
+class TripletDataset:
+    def __init__(self):
+        self.users = 5
+        self.current_path = os.path.dirname(os.path.realpath(__file__))
+        self.path = self.current_path + r".\dataset\user_000"
+        self.groups = {}
+
+    def extract(self):
+        data = {}
+
+        for i in range(1,self.users+1):
+            local_path = self.path + str(i)
+            filenames = glob.glob(local_path + "\*.csv")
+            road_area = 1
+            dfs = pd.DataFrame()
+            for file in filenames:
+                df = pd.read_csv(file, index_col=0)
+                df['USER'] = pd.Series([i for x in range(len(df.index))], index=df.index)
+                df['ROAD_AREA'] = pd.Series([road_area for x in range(len(df.index))], index=df.index)
+
+                if road_area == 1:
+                    dfs = df
+                else:
+                    dfs = pd.concat([dfs, df])
+
+                road_area += 1
+
+            data[i] = dfs
+        return data
+
+    def create_triplet_dataset(self, rnd_seed=0):
+        seed = rnd_seed
+        data = self.extract()
+        A = pd.DataFrame()      # Anchor
+        P = pd.DataFrame()      # Positive
+        N = pd.DataFrame()      # Negative
+        for user in range(1,self.users+1):
+            len = data[user].shape[0]
+            for i in range(len):
+                A = A.append(data[user].iloc[i,:])
+                rnd = choice([j for j in range(0,len) if j not in [i]])
+                P = P.append(data[user].iloc[rnd,:])
+
+                rnd_user = choice([j for j in range(1,self.users+1) if j not in [user]])
+                rnd_neg = randint(0,data[rnd_user].shape[0]-1)
+                # print(data[rnd_user].iloc[rnd_neg,:])
+                N = N.append(data[rnd_user].iloc[rnd_neg,:])
+
+        A.to_csv(self.current_path + '\\dataset\\triplet_data\\anchor.csv')
+        P.to_csv(self.current_path + '\\dataset\\triplet_data\\positive.csv')
+        N.to_csv(self.current_path + '\\dataset\\triplet_data\\negative.csv')
+        # return A, P, N
+
+    def load_triplet_data(self):
+        data = {}
+
+        data['A'] = pd.read_csv(self.current_path + '\\dataset\\triplet_data\\anchor.csv')
+        data['P'] = pd.read_csv(self.current_path + '\\dataset\\triplet_data\\positive.csv')
+        data['N'] = pd.read_csv(self.current_path + '\\dataset\\triplet_data\\negative.csv')
+        return data
 
 
 
-
-
-TD = DataExtraction()
+TD = TripletDataset()
 
 dict = TD.extract()
+
+TD.create_triplet_dataset()
+
+data = TD.load_triplet_data()
