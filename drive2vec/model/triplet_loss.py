@@ -1,5 +1,5 @@
 import torch
-import torch.nn as tnn
+import torch.nn as nn
 import data
 
 class TripletMarginLoss:
