@@ -1,9 +1,10 @@
-from model import tcn
+from model import tcn, triplet_loss
 from data import data_process
 import pandas as pd
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader , TensorDataset
+import utils
 
 
 # Model parameters
@@ -26,6 +27,9 @@ dataset = TensorDataset(x_train, y_train)
 trainloader = DataLoader(dataset , batch_size = len(x_train), shuffle=False)
 
 print(trainloader)
+
+# Loss function
+criterion = torch.jit.script(triplet_loss.TripletLoss())
 
 # Training parameters
 learning_rate = 5e-1  # step size for gradient descent
