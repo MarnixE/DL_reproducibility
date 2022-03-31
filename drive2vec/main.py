@@ -6,7 +6,7 @@ import torch.nn as nn
 from torch.utils.data import DataLoader , TensorDataset
 import torch.optim as optim
 import utils
-from tqdm import tqdm
+# from tqdm import tqdm
 import numpy as np
 from IPython.display import display
 
@@ -27,16 +27,13 @@ model = tcn.TCN_net(n_inputs, n_channels, kernel_size, stride, dropout)
 
 # Load data
 dp = data_process.DataProcess()
-x_train_anchor, x_train_pos, x_train_neg, y_train_anchor = dp.train_data()
-train_data = [x_train_anchor, x_train_pos, x_train_neg, y_train_anchor]
-train_loader = DataLoader(train_data, batch_size=len(x_train_anchor),num_workers=5)
+# x_train_anchor, x_train_pos, x_train_neg, y_train_anchor = dp.train_data()
+# train_data = [x_train_anchor, x_train_pos, x_train_neg, y_train_anchor]
 
-print(train_loader)
 
-# dataset = TensorDataset(x_train, y_train)
-# trainloader = DataLoader(dataset , batch_size = len(x_train), shuffle=False)
+# train_loader = DataLoader((x_train_anchor, x_train_pos, x_train_neg, y_train_anchor), batch_size=len(x_train_anchor), num_workers=5)
 
-# print(trainloader)
+train_loader = DataLoader(dp, batch_size=100, num_workers=5)
 
 # Loss function and optimizer
 optimizer = optim.Adam(model.parameters(), lr=0.001)
@@ -48,10 +45,10 @@ epochs = 10  # how many times to iterate through the intire training set
 
 model.train()
 
-for epoch in tqdm(range(epochs), desc="Epochs"):
+for epoch in range(epochs):
     running_loss = []
-    for step, (anchor_point, pos_point, neg_point, anchor_label) in enumerate(tqdm(train_loader, desc="Training", leave=False)):
-        print(anchor_point)
+    for step, (anchor_point, pos_point, neg_point, anchor_label) in enumerate(train_loader):
+    # for anchor_point, pos_point, neg_point, anchor_label in train_data:
         anchor_point = anchor_point.to(device)
         pos_point = pos_point.to(device)
         neg_point = neg_point.to(device)
