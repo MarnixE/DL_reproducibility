@@ -2,12 +2,16 @@ import glob
 import pandas as pd
 import os
 from random import choice, randint, seed
+from pathlib import Path
 
 class DataExtraction:
     def __init__(self):
         self.users = 5
-        self.current_path = os.path.dirname(os.path.realpath(__file__))
-        self.path = self.current_path + r".\dataset\user_000"
+        # self.current_path = os.path.dirname(os.path.realpath(__file__))
+        # self.path = self.current_path + r"/dataset/user_000"
+        self.current_path = os.getcwd()
+        self.data_folder = Path("/drive2vec/data/dataset/user_000")
+        self.path = self.current_path + str(self.data_folder)
         self.groups = {}
 
     def extract(self):
@@ -15,7 +19,7 @@ class DataExtraction:
 
         for i in range(self.users+1):
             local_path = self.path + str(i)
-            filenames = glob.glob(local_path + "\*.csv")
+            filenames = glob.glob(local_path + "/*.csv")
             road_area = 1
             for file in filenames:
                 df = pd.read_csv(file,index_col=0)
@@ -155,11 +159,11 @@ class TripletDataset:
 
 
 
-TD = TripletDataset()
+# TD = TripletDataset()
 
-dict = TD.extract()
+# dict = TD.extract()
 
-for i in range(1,20):
-    TD.create_triplet_dataset(rnd_seed=i)
+# for i in range(1,20):
+#     TD.create_triplet_dataset(rnd_seed=i)
 
-data = TD.load_triplet_data()
+# data = TD.load_triplet_data()

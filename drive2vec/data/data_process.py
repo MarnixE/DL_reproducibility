@@ -6,7 +6,7 @@ from IPython.display import display
 class DataProcess(DataExtraction):
     def __init__(self):
         self.all_data = DataExtraction().extract()
-        #display(self.all_data)
+        display(self.all_data)
 
     def train_data(self):
         x = self.all_data.iloc[:, 0:38].values

@@ -18,7 +18,6 @@ dropout = 0.1
 # Load model
 model = tcn.TCN_net(n_inputs, n_channels, kernel_size, stride, dropout)
 
-
 # Load data
 dp = data_process.DataProcess()
 x_train, y_train = dp.train_data()
