@@ -19,7 +19,7 @@ class DataExtraction:
 
         for i in range(self.users+1):
             local_path = self.path + str(i)
-            filenames = glob.glob(local_path + "\*.csv")
+            filenames = glob.glob(local_path + "/*.csv")
             road_area = 1
             for file in filenames:
                 df = pd.read_csv(file,index_col=0)
@@ -100,7 +100,7 @@ class TripletDataset:
     def __init__(self):
         self.users = 5
         self.current_path = os.path.dirname(os.path.realpath(__file__))
-        self.path = self.current_path + r".\dataset\user_000"
+        self.path = self.current_path + r"/dataset/user_000"
         self.groups = {}
 
     def extract(self):
@@ -108,7 +108,7 @@ class TripletDataset:
 
         for i in range(1,self.users+1):
             local_path = self.path + str(i)
-            filenames = glob.glob(local_path + "\*.csv")
+            filenames = glob.glob(local_path + "/*.csv")
             road_area = 1
             dfs = pd.DataFrame()
             for file in filenames:
@@ -144,26 +144,26 @@ class TripletDataset:
                 # print(data[rnd_user].iloc[rnd_neg,:])
                 N = N.append(data[rnd_user].iloc[rnd_neg,:])
 
-        A.to_csv(self.current_path + '\\dataset\\triplet_data\\anchor' + str(rnd_seed) +'.csv')
-        P.to_csv(self.current_path + '\\dataset\\triplet_data\\positive' + str(rnd_seed) +'.csv')
-        N.to_csv(self.current_path + '\\dataset\\triplet_data\\negative' + str(rnd_seed) +'.csv')
-        # return A, P, N
+        A.to_csv(self.current_path + '/dataset/triplet_data/anchor' + str(rnd_seed) +'.csv')
+        P.to_csv(self.current_path + '/dataset/triplet_data/positive' + str(rnd_seed) +'.csv')
+        N.to_csv(self.current_path + '/dataset/triplet_data/negative' + str(rnd_seed) +'.csv')
+        return A, P, N
 
     def load_triplet_data(self,idx=0):
         data = {}
 
-        data['A'] = pd.read_csv(self.current_path + '\\dataset\\triplet_data\\anchor' + str(idx) +'.csv')
-        data['P'] = pd.read_csv(self.current_path + '\\dataset\\triplet_data\\positive' + str(idx) +'.csv')
-        data['N'] = pd.read_csv(self.current_path + '\\dataset\\triplet_data\\negative' + str(idx) +'.csv')
+        data['A'] = pd.read_csv(self.current_path + '/dataset/triplet_data/anchor' + str(idx) +'.csv')
+        data['P'] = pd.read_csv(self.current_path + '/dataset/triplet_data/positive' + str(idx) +'.csv')
+        data['N'] = pd.read_csv(self.current_path + '/dataset/triplet_data/negative' + str(idx) +'.csv')
         return data
 
 
 
-TD = TripletDataset()
+# TD = TripletDataset()
 
-dict = TD.extract()
+# dict = TD.extract()
 
-for i in range(1,20):
-    TD.create_triplet_dataset(rnd_seed=i)
+# for i in range(0,1):
+#     TD.create_triplet_dataset(rnd_seed=i)
 
-data = TD.load_triplet_data()
+# data = TD.load_triplet_data()

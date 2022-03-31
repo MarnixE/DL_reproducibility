@@ -4,8 +4,15 @@ import pandas as pd
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader , TensorDataset
+import torch.optim as optim
 import utils
+from tqdm import tqdm
+import numpy as np
+from IPython.display import display
 
+
+torch.manual_seed(2020)
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Model parameters
 n_inputs = 32
@@ -20,31 +27,73 @@ model = tcn.TCN_net(n_inputs, n_channels, kernel_size, stride, dropout)
 
 # Load data
 dp = data_process.DataProcess()
-x_train, y_train = dp.train_data()
+x_train_anchor, x_train_pos, x_train_neg, y_train_anchor = dp.train_data()
+train_data = [x_train_anchor, x_train_pos, x_train_neg, y_train_anchor]
+train_loader = DataLoader(train_data, batch_size=len(x_train_anchor),num_workers=5)
 
-dataset = TensorDataset(x_train, y_train)
-trainloader = DataLoader(dataset , batch_size = len(x_train), shuffle=False)
+print(train_loader)
 
-print(trainloader)
+# dataset = TensorDataset(x_train, y_train)
+# trainloader = DataLoader(dataset , batch_size = len(x_train), shuffle=False)
 
-# Loss function
+# print(trainloader)
+
+# Loss function and optimizer
+optimizer = optim.Adam(model.parameters(), lr=0.001)
 criterion = torch.jit.script(triplet_loss.TripletLoss())
 
 # Training parameters
 learning_rate = 5e-1  # step size for gradient descent
 epochs = 10  # how many times to iterate through the intire training set
 
-# Define list to store loss of each iteration
-train_losses = []
-train_accs = []
+model.train()
 
-for i, (data, labels) in enumerate(trainloader):
-  print(data.shape, labels.shape)
-  print(data)
-  if i == 3:
-      break
+for epoch in tqdm(range(epochs), desc="Epochs"):
+    running_loss = []
+    for step, (anchor_point, pos_point, neg_point, anchor_label) in enumerate(tqdm(train_loader, desc="Training", leave=False)):
+        print(anchor_point)
+        anchor_point = anchor_point.to(device)
+        pos_point = pos_point.to(device)
+        neg_point = neg_point.to(device)
+        
+        optimizer.zero_grad()
+        anchor_out = model(anchor_point)
+        positive_out = model(pos_point)
+        negative_out = model(neg_point )
+        
+        loss = criterion(anchor_out, positive_out, negative_out)
+        loss.backward()
+        optimizer.step()
+        
+        running_loss.append(loss.cpu().detach().numpy())
+    print("Epoch: {}/{} - Loss: {:.4f}".format(epoch+1, epochs, np.mean(running_loss)))
 
 
+
+
+
+
+
+
+# # Define list to store loss of each iteration
+# train_losses = []
+# train_accs = []
+
+
+
+# for i, (data, labels) in enumerate(trainloader):
+#   print(data.shape, labels.shape)
+#   print(data)
+#   if i == 3:
+#       break
+
+
+
+# # Training loop
+# model.train()
+# for epoch in tqdm(range(epochs), desc="Epochs"):
+#   running_loss = []
+#   for step, (anchor_point, pos_point, neg_point, anchor_label) in enumerate(tqdm(train_loader, desc="Trainig", leave=False))
 
 # # Training loop
 # for epoch in range(epochs):
