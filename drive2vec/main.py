@@ -69,7 +69,7 @@ def get_device():
 
 device = get_device()
 
-for epoch in range(epochs):s
+for epoch in range(epochs):
     model.train()
     running_loss = []
     for step, (anchor_point, pos_point, neg_point, anchor_label) in enumerate(train_loader):
