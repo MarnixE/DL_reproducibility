@@ -15,9 +15,9 @@ torch.manual_seed(2020)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Model parameters
-n_inputs = 32
-n_channels = [32, 32, 32, 32, 32]
-n_outputs = 32
+n_inputs = 38
+n_channels = [38, 38, 38, 38, 38]
+n_outputs = 38
 kernel_size = 2
 stride = 1
 dropout = 0.1
@@ -27,13 +27,14 @@ model = tcn.TCN_net(n_inputs, n_channels, kernel_size, stride, dropout)
 
 # Load data
 dp = data_process.DataProcess()
+train_data = dp.train_data()
+
 # x_train_anchor, x_train_pos, x_train_neg, y_train_anchor = dp.train_data()
 # train_data = [x_train_anchor, x_train_pos, x_train_neg, y_train_anchor]
 
-
 # train_loader = DataLoader((x_train_anchor, x_train_pos, x_train_neg, y_train_anchor), batch_size=len(x_train_anchor), num_workers=5)
 
-train_loader = DataLoader(dp, batch_size=100, num_workers=5)
+train_loader = DataLoader(train_data, batch_size=100, num_workers=5)
 
 # Loss function and optimizer
 optimizer = optim.Adam(model.parameters(), lr=0.001)
@@ -56,7 +57,7 @@ for epoch in range(epochs):
         optimizer.zero_grad()
         anchor_out = model(anchor_point)
         positive_out = model(pos_point)
-        negative_out = model(neg_point )
+        negative_out = model(neg_point)
         
         loss = criterion(anchor_out, positive_out, negative_out)
         loss.backward()

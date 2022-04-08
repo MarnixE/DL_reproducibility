@@ -19,27 +19,31 @@ class DataProcess(DataExtraction):
         self.neg_data = pd.read_csv(file_path_neg)
 
         self.x_anchor = self.anchor_data.iloc[:, 0:38].values
-        self.y_anchor = self.anchor_data.iloc[:, 38].values.astype(int)
+        self.y_anchor = self.anchor_data.iloc[:, 38].values
 
-        self.x_pos = self.pos_data.iloc[:, 0:38].values.astype(int)
+        self.x_pos = self.pos_data.iloc[:, 0:38].values
 
-        self.x_neg = self.neg_data.iloc[:, 0:38].values.astype(int)
+        self.x_neg = self.neg_data.iloc[:, 0:38].values
 
     def __len__(self):
         return len(self.x_anchor)
 
-    def __getitem__(self, item):
-        self.x_anchor = torch.Tensor(self.x_anchor[item])
-        self.x_pos = torch.Tensor(self.x_pos[item])
-        self.x_neg = torch.Tensor(self.x_neg[item])
-        self.y_anchor = torch.Tensor(self.y_anchor[item])
+    # def __getitem__(self, item):
+    #     self.x_anchor = torch.Tensor(self.x_anchor[item])
+    #     self.x_pos = torch.Tensor(self.x_pos[item])
+    #     self.x_neg = torch.Tensor(self.x_neg[item])
+    #     self.y_anchor = torch.Tensor(self.y_anchor[item])
 
-        return self.x_anchor, self.x_pos, self.x_neg, self.y_anchor
+    #     return self.x_anchor, self.x_pos, self.x_neg, self.y_anchor
+
+    def train_data(self):
+        self.x_anchor = torch.Tensor(self.x_anchor)
+        self.x_pos = torch.Tensor(self.x_pos)
+        self.x_neg = torch.Tensor(self.x_neg)
+        self.y_anchor = torch.Tensor(self.y_anchor)
 
 
-        
-
-
+    
         
 
     # def train_data(self):
