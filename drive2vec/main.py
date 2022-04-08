@@ -9,24 +9,30 @@ import utils
 # from tqdm import tqdm
 import numpy as np
 from IPython.display import display
+from torchsummary import summary
 
 
 torch.manual_seed(2020)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Model parameters
-n_inputs = 100
-n_channels = [39, 39, 39, 39, 39]
-n_outputs = 39
-kernel_size = 2
+n_inputs = 1000
+input_size = 38
+n_channels = [38, 38, 38, 38, 38]
+n_outputs = 5
+kernel_size = 3
 stride = 1
 dropout = 0.1
 
 # Load model
-model = tcn.TCN_net(n_inputs, n_channels, kernel_size, stride, dropout)
+model = tcn.TCN_net(input_size, n_channels, kernel_size, stride, dropout)
 model.cuda()
 
-print(model)
+
+# summary(model, (100, 39), device='cuda') # (in_channels, height, width)
+# print(model)
+
+
 
 # Load data
 dp = data_process.DataProcess()
@@ -37,11 +43,11 @@ dp = data_process.DataProcess()
 
 # train_loader = DataLoader((x_train_anchor, x_train_pos, x_train_neg, y_train_anchor), batch_size=len(x_train_anchor), num_workers=5)
 
-train_loader = DataLoader(dp, batch_size=100, shuffle=False, num_workers=5)
+train_loader = DataLoader(dp, batch_size=3, num_workers=5)
 
-train_features, train_labels = next(iter(train_loader))
-print(f"Feature batch shape: {train_features.size()}")
-print(f"Labels batch shape: {train_labels.size()}")
+# train_features, train_labels = next(iter(train_loader))
+# print(f"Feature batch shape: {train_features.size()}")
+# print(f"Labels batch shape: {train_labels.size()}")
 
 
 # Loss function and optimizer
@@ -63,21 +69,21 @@ def get_device():
 
 device = get_device()
 
-for epoch in range(epochs):
+for epoch in range(epochs):s
+    model.train()
     running_loss = []
-    for step, (anchor_point, anchor_label) in enumerate(train_loader):
-    # for anchor_point, pos_point, neg_point, anchor_label in train_data:
-        anchor_point = anchor_point.to(device)
-        # pos_point = pos_point.to(device)
-        # neg_point = neg_point.to(device)
+    for step, (anchor_point, pos_point, neg_point, anchor_label) in enumerate(train_loader):
+        anchor_point = anchor_point.to(device, dtype=torch.float)
+        pos_point = pos_point.to(device, dtype=torch.float)
+        neg_point = neg_point.to(device, dtype=torch.float)
         
         optimizer.zero_grad()
         anchor_out = model(anchor_point)
-        # positive_out = model(pos_point)
-        # negative_out = model(neg_point)
+        positive_out = model(pos_point)
+        negative_out = model(neg_point)
         
-        # loss = criterion(anchor_out, positive_out, negative_out)
-        loss = criterion(anchor_out)
+        loss = criterion(anchor_out, positive_out, negative_out)
+        # loss = criterion(anchor_out)
         loss.backward()
         optimizer.step()
         
