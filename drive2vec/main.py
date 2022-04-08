@@ -15,26 +15,34 @@ torch.manual_seed(2020)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Model parameters
-n_inputs = 38
-n_channels = [38, 38, 38, 38, 38]
-n_outputs = 38
+n_inputs = 100
+n_channels = [39, 39, 39, 39, 39]
+n_outputs = 39
 kernel_size = 2
 stride = 1
 dropout = 0.1
 
 # Load model
 model = tcn.TCN_net(n_inputs, n_channels, kernel_size, stride, dropout)
+model.cuda()
+
+print(model)
 
 # Load data
 dp = data_process.DataProcess()
-train_data = dp.train_data()
+# train_data = dp.train_data()
 
 # x_train_anchor, x_train_pos, x_train_neg, y_train_anchor = dp.train_data()
 # train_data = [x_train_anchor, x_train_pos, x_train_neg, y_train_anchor]
 
 # train_loader = DataLoader((x_train_anchor, x_train_pos, x_train_neg, y_train_anchor), batch_size=len(x_train_anchor), num_workers=5)
 
-train_loader = DataLoader(train_data, batch_size=100, num_workers=5)
+train_loader = DataLoader(dp, batch_size=100, shuffle=False, num_workers=5)
+
+train_features, train_labels = next(iter(train_loader))
+print(f"Feature batch shape: {train_features.size()}")
+print(f"Labels batch shape: {train_labels.size()}")
+
 
 # Loss function and optimizer
 optimizer = optim.Adam(model.parameters(), lr=0.001)
@@ -46,20 +54,30 @@ epochs = 10  # how many times to iterate through the intire training set
 
 model.train()
 
+def get_device():
+    if torch.cuda.is_available():
+        device = torch.device('cuda:0')
+    else:
+        device = torch.device('cpu') # don't have GPU 
+    return device
+
+device = get_device()
+
 for epoch in range(epochs):
     running_loss = []
-    for step, (anchor_point, pos_point, neg_point, anchor_label) in enumerate(train_loader):
+    for step, (anchor_point, anchor_label) in enumerate(train_loader):
     # for anchor_point, pos_point, neg_point, anchor_label in train_data:
         anchor_point = anchor_point.to(device)
-        pos_point = pos_point.to(device)
-        neg_point = neg_point.to(device)
+        # pos_point = pos_point.to(device)
+        # neg_point = neg_point.to(device)
         
         optimizer.zero_grad()
         anchor_out = model(anchor_point)
-        positive_out = model(pos_point)
-        negative_out = model(neg_point)
+        # positive_out = model(pos_point)
+        # negative_out = model(neg_point)
         
-        loss = criterion(anchor_out, positive_out, negative_out)
+        # loss = criterion(anchor_out, positive_out, negative_out)
+        loss = criterion(anchor_out)
         loss.backward()
         optimizer.step()
         
