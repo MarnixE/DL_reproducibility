@@ -20,7 +20,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 n_inputs = 1000
 input_size = 38
 n_channels = [38, 38, 38, 38, 38]
-n_outputs = 5
+n_outputs = 15
 kernel_size = 3
 stride = 1
 dropout = 0.1
@@ -31,7 +31,7 @@ model.cuda()
 
 
 # summary(model, (38, 1000), device='cuda') # (in_channels, height, width)
-# print(model)
+print(model)
 
 
 
@@ -112,7 +112,7 @@ def train_model():
 
 
 
-# train_model()
+train_model()
 
 # Save model
 torch.save({"model_state_dict": model.state_dict(),
