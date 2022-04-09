@@ -136,13 +136,29 @@ class TripletDataset:
             len = data[user].shape[0]
             for i in range(len):
                 A = A.append(data[user].iloc[i,:])
-                rnd = choice([j for j in range(0,len) if j not in [i]])
-                P = P.append(data[user].iloc[rnd,:])
+                if i < 500:
+                    P = P.append(data[user].iloc[i + 500,:])
+                    if user == 5:
+                        N = N.append(data[user - 1].iloc[i + 500, :])
+                    elif user == 2:
+                        N = N.append(data[user - 1].iloc[i + 500, :])
+                    else:
+                        N = N.append(data[user + 1].iloc[i + 500, :])
+                else:
+                    P = P.append(data[user].iloc[i - 500, :])
+                    if user == 5:
+                        N = N.append(data[user - 1].iloc[i - 500, :])
+                    elif user == 2:
+                        N = N.append(data[user - 1].iloc[i - 500, :])
+                    else:
+                        N = N.append(data[user + 1].iloc[i - 500, :])
+                # rnd = choice([j for j in range(0,len) if j not in [i]])
+                # P = P.append(data[user].iloc[rnd,:])
 
-                rnd_user = choice([j for j in range(1,self.users+1) if j not in [user]])
-                rnd_neg = randint(0,data[rnd_user].shape[0]-1)
+                # rnd_user = choice([j for j in range(1,self.users+1) if j not in [user]])
+                # rnd_neg = randint(0,data[rnd_user].shape[0]-1)
                 # print(data[rnd_user].iloc[rnd_neg,:])
-                N = N.append(data[rnd_user].iloc[rnd_neg,:])
+                # N = N.append(data[rnd_user].iloc[rnd_neg,:])
 
         A.to_csv(self.current_path + '/dataset/triplet_data/anchor' + str(rnd_seed) +'.csv')
         P.to_csv(self.current_path + '/dataset/triplet_data/positive' + str(rnd_seed) +'.csv')
@@ -159,11 +175,11 @@ class TripletDataset:
 
 
 
-# TD = TripletDataset()
+TD = TripletDataset()
 
-# dict = TD.extract()
+dict = TD.extract()
 
-# for i in range(0,1):
-#     TD.create_triplet_dataset(rnd_seed=i)
+for i in range(0,1):
+    TD.create_triplet_dataset(rnd_seed=i)
 
-# data = TD.load_triplet_data()
+data = TD.load_triplet_data()

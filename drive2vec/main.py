@@ -94,7 +94,7 @@ def train_model():
             anchor_out = model(anchor_point)
             positive_out = model(pos_point)
             negative_out = model(neg_point)
-            
+
             loss = criterion(anchor_out, positive_out, negative_out)
             loss.backward()
             optimizer.step()
