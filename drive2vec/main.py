@@ -12,7 +12,6 @@ from IPython.display import display
 from torchsummary import summary
 import matplotlib.pyplot as plt
 
-
 torch.manual_seed(2020)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -20,8 +19,8 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 n_inputs = 1000
 input_size = 38
 n_channels = [38, 38, 38, 38, 38]
-n_outputs = 15
-kernel_size = 3
+n_outputs = 38
+kernel_size = 16
 stride = 1
 dropout = 0.1
 
@@ -31,8 +30,7 @@ model.cuda()
 
 
 # summary(model, (38, 1000), device='cuda') # (in_channels, height, width)
-print(model)
-
+# print(model)
 
 
 # Load data
@@ -44,15 +42,14 @@ print(f"Feature batch shape: {train_features.size()}")
 print(f"Labels batch shape: {train_labels.size()}")
 
 
+# def get_device():
+#     if torch.cuda.is_available():
+#         device = torch.device('cuda:0')
+#     else:
+#         device = torch.device('cpu') # don't have GPU 
+#     return device
 
-def get_device():
-    if torch.cuda.is_available():
-        device = torch.device('cuda:0')
-    else:
-        device = torch.device('cpu') # don't have GPU 
-    return device
-
-device = get_device()
+# device = get_device()
 
 def evaluate_accuracy(data_loader, net, device=device):
     net.eval()  #make sure network is in evaluation mode
@@ -76,7 +73,7 @@ optimizer = optim.Adam(model.parameters(), lr=0.05)
 criterion = torch.jit.script(triplet_loss.TripletLoss())
 
 # Training parameters
-epochs = 2000
+epochs = 10
 
 train_accs = []
 running_loss = []
