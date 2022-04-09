@@ -93,34 +93,3 @@ class DataProcess(DataExtraction):
 
 
 
-
-
-
-
-    # def train_data(self):
-    #     self.x_anchor = torch.Tensor(self.x_anchor)
-    #     # self.x_pos = torch.Tensor(self.x_pos)
-    #     # self.x_neg = torch.Tensor(self.x_neg)
-    #     self.y_anchor = torch.Tensor(self.y_anchor)
-
-    # def train_data(self):
-
-    #     self.x_anchor = []
-    #     self.x_pos = []
-    #     self.x_neg = []
-    #     # self.y_anchor = []
-
-
-    #     for i in range(self.x_anchor_in.shape[0]):
-    #         self.x_anchor.append(torch.Tensor(self.x_anchor_in[i]))
-    #         self.x_pos.append(torch.Tensor(self.x_pos_in[i]))
-    #         self.x_neg.append(torch.Tensor(self.x_neg_in[i]))
-       
-
-
-    #     # self.x_train = torch.tensor(x)
-    #     # self.y_train = torch.tensor(y)
-
-    #     return self.x_anchor, self.x_pos, self.x_neg, self.y_anchor
-
-

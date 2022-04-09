@@ -29,36 +29,20 @@ model = tcn.TCN_net(input_size, n_channels, kernel_size, stride, dropout)
 model.cuda()
 
 
-# summary(model, (100, 39), device='cuda') # (in_channels, height, width)
+# summary(model, (38, 1000), device='cuda') # (in_channels, height, width)
 # print(model)
 
 
 
 # Load data
 dp = data_process.DataProcess()
-# train_data = dp.train_data()
-
-# x_train_anchor, x_train_pos, x_train_neg, y_train_anchor = dp.train_data()
-# train_data = [x_train_anchor, x_train_pos, x_train_neg, y_train_anchor]
-
-# train_loader = DataLoader((x_train_anchor, x_train_pos, x_train_neg, y_train_anchor), batch_size=len(x_train_anchor), num_workers=5)
-
-train_loader = DataLoader(dp, batch_size=3, num_workers=5)
+train_loader = DataLoader(dp, batch_size=18, num_workers=5)
 
 # train_features, train_labels = next(iter(train_loader))
 # print(f"Feature batch shape: {train_features.size()}")
 # print(f"Labels batch shape: {train_labels.size()}")
 
 
-# Loss function and optimizer
-optimizer = optim.Adam(model.parameters(), lr=0.001)
-criterion = torch.jit.script(triplet_loss.TripletLoss())
-
-# Training parameters
-learning_rate = 5e-1  # step size for gradient descent
-epochs = 10  # how many times to iterate through the intire training set
-
-model.train()
 
 def get_device():
     if torch.cuda.is_available():
@@ -69,26 +53,58 @@ def get_device():
 
 device = get_device()
 
+def evaluate_accuracy(data_loader, net, device=device):
+    net.eval()  #make sure network is in evaluation mode
+
+    #init
+    acc_sum = torch.tensor([0], dtype=torch.float, device=device)
+    n = 0
+
+    for X, _, _, y in data_loader:
+        # Copy the data to device.
+        X, y = X.to(device, dtype=torch.float), y.to(device, dtype=torch.float)
+        with torch.no_grad():
+            y = y.long()
+            acc_sum += torch.sum((torch.argmax(net(X), dim=1) == y))
+            n += y.shape[0] #increases with the number of samples in the batch
+    return acc_sum.item()/n
+
+
+# Loss function and optimizer
+optimizer = optim.Adam(model.parameters(), lr=0.01)
+criterion = torch.jit.script(triplet_loss.TripletLoss())
+
+# Training parameters
+epochs = 100 
+
+train_accs = []
+running_loss = []
+
 for epoch in range(epochs):
     model.train()
-    running_loss = []
+    
     for step, (anchor_point, pos_point, neg_point, anchor_label) in enumerate(train_loader):
         anchor_point = anchor_point.to(device, dtype=torch.float)
         pos_point = pos_point.to(device, dtype=torch.float)
         neg_point = neg_point.to(device, dtype=torch.float)
         
         optimizer.zero_grad()
+
         anchor_out = model(anchor_point)
         positive_out = model(pos_point)
         negative_out = model(neg_point)
         
         loss = criterion(anchor_out, positive_out, negative_out)
-        # loss = criterion(anchor_out)
         loss.backward()
         optimizer.step()
         
         running_loss.append(loss.cpu().detach().numpy())
+
+    train_acc = 100*evaluate_accuracy(train_loader, model.to(device))
+    train_accs.append(train_acc)
     print("Epoch: {}/{} - Loss: {:.4f}".format(epoch+1, epochs, np.mean(running_loss)))
+    print('Accuracy of train set: {:.00f}%'.format(train_acc))
+    print('')
 
 
 
