@@ -1,3 +1,4 @@
+from turtle import forward
 import torch
 import torch.nn as nn
 from torch.nn.utils import weight_norm
@@ -12,7 +13,7 @@ class Chomp1d(nn.Module):
     def forward(self, x):
         return x[:, :, :-self.chomp_size].contiguous()
 
-
+# TCN block
 class TCN_block(nn.Module):
     def __init__(self, n_inputs, n_outputs, kernel_size, stride, dilation, padding, dropout):
         super(TCN_block, self).__init__()
@@ -42,16 +43,15 @@ class TCN_block(nn.Module):
         return self.relu(out + res)
 
 
-
-
+# TCN stacked blocks 
 class TCN_net(nn.Module):
-    def __init__(self, n_inputs, n_channels, kernel_size, stride, dropout):
+    def __init__(self, input_channels, n_channels, kernel_size, stride, dropout):
         super(TCN_net, self).__init__()
         layers = []
         num_levels = len(n_channels)
         for i in range(num_levels):
             dilation_size = 2 ** i
-            in_channels = n_inputs if i == 0 else n_channels[i - 1]
+            in_channels = input_channels if i == 0 else n_channels[i - 1]
             out_channels = n_channels[i]
             layers += [TCN_block(in_channels,
                                  out_channels,
@@ -67,36 +67,25 @@ class TCN_net(nn.Module):
         return self.network(x)
 
 
-def CrossEntropyLoss(y_true, y_pred):
-    
-    # Calculate softmax using previously defined function
-    softmax = Softmax(y_pred)
+# Complete TCN Model
+class TCN(nn.Module):
+    def __init__(self, input_channels, n_channels, kernel_size, stride, dropout, n_outputs):
+        super(TCN, self).__init__()
+        
+        # Create TCN blocks
+        self.tcn = TCN_net(input_channels, n_channels, kernel_size, stride, dropout)
 
-    # Convert one-hot vector to class id
-    y_true = torch.argmax(y_true, axis=1)
-    # Get number of samples in batch
-    n = y_true.shape[0]
-    # Calculate cross entropy loss between y_true and y_pred
-    log_likelihood = -torch.log(y_pred[torch.arange(n),y_true])
-    # Average over all samples
-    loss = torch.mean(log_likelihood)
+        # Init batch normalization
+        self.input_bn = nn.BatchNorm1d(n_channels[-1])
 
-    # Caculate the gradient 
-    grad = softmax
-    softmax[torch.arange(n), y_true] -= 1
-    grad /= n
+        # Init final linear layer
+        self.linear = nn.Linear(n_channels[-1], n_outputs)
 
-    return loss, grad
+    def forward(self, x):
+        y = self.tcn(x)
 
-def Softmax(z):
-    exps = torch.exp(z)
-    p = exps / torch.sum(exps, axis=1, keepdim=True)
+        y_norm = self.input_bn(y[:, :, -1])
 
-    return p
+        output = self.linear(y_norm)
 
-
-
-
-
-
-
+        return output

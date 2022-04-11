@@ -25,11 +25,11 @@ stride = 1
 dropout = 0.1
 
 # Load model
-model = tcn.TCN_net(input_size, n_channels, kernel_size, stride, dropout)
+model = tcn.TCN(input_size, n_channels, kernel_size, stride, dropout, n_outputs)
 model.cuda()
 
 
-# summary(model, (38, 1000), device='cuda') # (in_channels, height, width)
+summary(model, (38, 1000), device='cuda') # (in_channels, height, width)
 # print(model)
 
 
@@ -69,11 +69,11 @@ def evaluate_accuracy(data_loader, net, device=device):
 
 
 # Loss function and optimizer
-optimizer = optim.Adam(model.parameters(), lr=0.05)
+optimizer = optim.Adam(model.parameters(), lr=0.001)
 criterion = torch.jit.script(triplet_loss.TripletLoss())
 
 # Training parameters
-epochs = 10
+epochs = 1000
 
 train_accs = []
 running_loss = []
@@ -112,9 +112,9 @@ def train_model():
 train_model()
 
 # Save model
-torch.save({"model_state_dict": model.state_dict(),
-            "optimzier_state_dict": optimizer.state_dict()
-           }, "trained_model.pth")
+# torch.save({"model_state_dict": model.state_dict(),
+#             "optimzier_state_dict": optimizer.state_dict()
+#            }, "trained_model.pth")
 
 
 
