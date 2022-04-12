@@ -33,6 +33,8 @@ class lightGBClassifier:
         # JUST FOR TESTING ...
         y_pred=clf.predict(X_train)
         
+        print(y_pred)
+        print(y_train)
         
         # view accuracy
 
