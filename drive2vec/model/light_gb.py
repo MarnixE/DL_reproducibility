@@ -17,15 +17,30 @@ class lightGBClassifier:
 
 
 
+
     def classifier(self, X_train, y_train):
-        clf = lgb.LGBMClassifier(learning_rate=self.learning_rate, max_depth=self.max_depth, random_state= self.random_state)
         X_train = X_train.cpu().detach().numpy()
         # X_train.detach().numpy()
         
         y_train = y_train.cpu().detach().numpy()
         # y_train = y_train.detach().numpy()
         
-        clf.fit(X_train, y_train)
+        params={}
+        params['learning_rate']=0.03
+        params['boosting_type']='gbdt' #GradientBoostingDecisionTree
+        params['objective']='multiclass' #Multi-class target feature
+        params['metric']='multi_logloss' #metric for multi-class
+        params['max_depth']=10
+        params['num_class']=6
+
+        # clf = lgb.LGBMClassifier(learning_rate=self.learning_rate, max_depth=self.max_depth, random_state= self.random_state, metric="multi_logloss")
+        d_train=lgb.Dataset(X_train, label=y_train)
+
+        
+        clf=lgb.train(params,d_train,100)
+
+        
+        # clf.fit(X_train, y_train)
 
         # predict the results
         # y_pred=clf.predict(self.X_test)
@@ -33,8 +48,8 @@ class lightGBClassifier:
         # JUST FOR TESTING ...
         y_pred=clf.predict(X_train)
         
-        print(y_pred)
-        print(y_train)
+        # print(y_pred)
+        # print(y_train)
         
         # view accuracy
 
