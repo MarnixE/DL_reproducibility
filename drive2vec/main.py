@@ -1,4 +1,4 @@
-from model import tcn, triplet_loss
+from model import tcn, triplet_loss, light_gb
 from data import data_process
 import pandas as pd
 import torch
@@ -6,7 +6,6 @@ import torch.nn as nn
 from torch.utils.data import DataLoader , TensorDataset
 import torch.optim as optim
 import utils
-# from tqdm import tqdm
 import numpy as np
 from IPython.display import display
 from torchsummary import summary
@@ -25,7 +24,7 @@ stride = 1
 dropout = 0.1
 
 # Load model
-model = tcn.TCN_net(input_size, n_channels, kernel_size, stride, dropout)
+model = tcn.TCN(input_size, n_channels, kernel_size, stride, dropout, n_outputs)
 model.cuda()
 
 
@@ -69,11 +68,14 @@ def evaluate_accuracy(data_loader, net, device=device):
 
 
 # Loss function and optimizer
-optimizer = optim.Adam(model.parameters(), lr=0.05)
+optimizer = optim.Adam(model.parameters(), lr=0.001)
 criterion = torch.jit.script(triplet_loss.TripletLoss())
 
+# Classifier
+clf = light_gb.lightGBClassifier(learning_rate=0.1)
+
 # Training parameters
-epochs = 10
+epochs = 100
 
 train_accs = []
 running_loss = []
@@ -100,6 +102,8 @@ def train_model():
             optimizer.step()
             
             running_loss.append(loss.cpu().detach().numpy())
+            
+            clf.classifier(anchor_out, anchor_label[:, 0])
 
         # train_acc = 100*evaluate_accuracy(train_loader, model.to(device))
         # train_accs.append(train_acc)
@@ -109,12 +113,17 @@ def train_model():
 
 
 
+
+
 train_model()
 
+
+
+
 # Save model
-torch.save({"model_state_dict": model.state_dict(),
-            "optimzier_state_dict": optimizer.state_dict()
-           }, "trained_model.pth")
+# torch.save({"model_state_dict": model.state_dict(),
+#             "optimzier_state_dict": optimizer.state_dict()
+#            }, "trained_model.pth")
 
 
 

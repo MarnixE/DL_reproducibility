@@ -175,11 +175,11 @@ class TripletDataset:
 
 
 
-TD = TripletDataset()
+# TD = TripletDataset()
 
-dict = TD.extract()
+# dict = TD.extract()
 
-for i in range(0,1):
-    TD.create_triplet_dataset(rnd_seed=i)
+# for i in range(0,1):
+#     TD.create_triplet_dataset(rnd_seed=i)
 
-data = TD.load_triplet_data()
+# data = TD.load_triplet_data()
