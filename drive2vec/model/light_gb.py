@@ -61,7 +61,7 @@ class lightGBClassifier:
         # view accuracy
 
         # accuracy = accuracy_score(self.y_pred, self.y_test)
-        print(y_pred)
+        # print(y_pred)
         accuracy = accuracy_score(y_pred, y_train)
         print('LightGBM Model accuracy score: {0:0.4f}'.format(accuracy))
         return(y_pred)
