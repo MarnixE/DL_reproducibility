@@ -81,6 +81,8 @@ class TCN(nn.Module):
         # Init final linear layer
         self.linear = nn.Linear(n_channels[-1], n_outputs)
 
+        # ADD WAVELET + FC
+
     def forward(self, x):
         y = self.tcn(x)
 

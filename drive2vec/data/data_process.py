@@ -30,7 +30,7 @@ class DataProcess(DataExtraction):
             # Convert pandas to 3D numpy array (20*1000*39)
             for i in range (in_array.shape[0]):
                 if (in_array[i, 39] != prev_user) or (in_array[i, 40] != prev_road):
-                    sample_array = np.array(in_array[split_idx:i, 1:40])
+                    sample_array = np.array(in_array[split_idx:i, 30:40])
                     list_samples.append(sample_array)
                     split_idx = i
                 prev_user = in_array[i, 39]
@@ -55,11 +55,11 @@ class DataProcess(DataExtraction):
 
 
         # Split pos and neg
-        array_pos = array_pos[0:18000, 1:40]
+        array_pos = array_pos[0:18000, 1:10]
         split_pos = array_pos.reshape(18, -1, array_pos.shape[1])
         self.split_pos = np.transpose(split_pos, (0, 2, 1))
 
-        array_neg = array_neg[0:18000, 1:40]
+        array_neg = array_neg[0:18000, 1:10]
         split_neg = array_neg.reshape(18, -1, array_neg.shape[1])
         self.split_neg = np.transpose(split_neg, (0, 2, 1))
 
@@ -70,10 +70,10 @@ class DataProcess(DataExtraction):
         return len(self.split_anchor)
 
     def __getitem__(self, idx):
-        x_anchor = self.split_anchor[idx, :38, :]
-        x_pos = self.split_pos[idx, :38, :]
-        x_neg = self.split_neg[idx, :38, :]
-        y_anchor = self.split_anchor[idx, 38, :]
+        x_anchor = self.split_anchor[idx, :9, :]
+        x_pos = self.split_pos[idx, :9, :]
+        x_neg = self.split_neg[idx, :9, :]
+        y_anchor = self.split_anchor[idx, 9, :]
 
         # x_anchor = np.array(x_anchor, dtype=np.float64)
         

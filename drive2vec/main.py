@@ -16,7 +16,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Model parameters
 n_inputs = 1000
-input_size = 38
+input_size = 9
 n_channels = [38, 38, 38, 38, 38]
 n_outputs = 38
 kernel_size = 16
@@ -75,7 +75,7 @@ criterion = torch.jit.script(triplet_loss.TripletLoss())
 clf = light_gb.lightGBClassifier(learning_rate=0.1)
 
 # Training parameters
-epochs = 100
+epochs = 500
 
 train_accs = []
 running_loss = []
