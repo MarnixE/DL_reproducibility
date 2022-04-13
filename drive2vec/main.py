@@ -25,7 +25,7 @@ dropout = 0.1
 
 # Load model
 model = tcn.TCN(input_size, n_channels, kernel_size, stride, dropout, n_outputs)
-model.cuda()
+# model.cuda()
 
 
 # summary(model, (38, 1000), device='cuda') # (in_channels, height, width)

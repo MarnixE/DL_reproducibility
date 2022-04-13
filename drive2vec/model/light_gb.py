@@ -2,6 +2,7 @@
 import lightgbm as lgb
 import torch.nn as tnn
 import torch
+import numpy as np
 
 from sklearn.metrics import accuracy_score
 
@@ -47,6 +48,7 @@ class lightGBClassifier:
 
         # JUST FOR TESTING ...
         y_pred=clf.predict(X_train)
+        y_pred = np.argmax(y_pred,axis=1)
         
         # print(y_pred)
         # print(y_train)
@@ -54,7 +56,7 @@ class lightGBClassifier:
         # view accuracy
 
         # accuracy = accuracy_score(self.y_pred, self.y_test)
-
+        print(y_pred)
         accuracy = accuracy_score(y_pred, y_train)
         print('LightGBM Model accuracy score: {0:0.4f}'.format(accuracy))
         return(y_pred)
