@@ -19,18 +19,6 @@ class Data_preProcess(DataExtraction):
         self.pos_data = pd.read_csv(file_path_pos)
         self.neg_data = pd.read_csv(file_path_neg)
 
-    def drop_features(self, name):
-        self.drop = {}
-        self.drop[0] = [1,2,3,4]
-        self.drop[1] = [8,9,10,11,12,13]
-        self.drop[2] = [6,19]
-        self.drop[3] = [14,24,25,26,27,28]
-        self.drop[4] = [5,6]
-        self.drop[5] = [7,38,]
-        self.drop[6] = [33,34,35,36,37]
-        self.drop[7] = [22,23]
-        self.drop[8] = [21,19]
-
     def preprocess(self):
         def split_samples(in_array):
             list_samples = []
@@ -74,8 +62,20 @@ class Data_preProcess(DataExtraction):
         array_neg = array_neg[0:18000, 1:40]
         split_neg = array_neg.reshape(18, -1, array_neg.shape[1])
         self.split_neg = np.transpose(split_neg, (0, 2, 1))
+
+    def drop_features(self):
+        self.drop = {}
+        self.drop[0] = [1, 2, 3, 4]
+        self.drop[1] = [8, 9, 10, 11, 12, 13]
+        self.drop[2] = [6, 19]
+        self.drop[3] = [14, 24, 25, 26, 27, 28]
+        self.drop[4] = [5, 6]
+        self.drop[5] = [7, 38, ]
+        self.drop[6] = [33, 34, 35, 36, 37]
+        self.drop[7] = [22, 23]
+        self.drop[8] = [21, 19]
     
-    def get_split(self):
+    def get_split(self, d):
         self.preprocess()
 
         anchor = self.split_anchor
@@ -109,8 +109,28 @@ class Data_preProcess(DataExtraction):
         pos_test = positive[test_idx, :, :]
         neg_test = negative[test_idx, :, :]
 
+        self.drop_features()
 
-        return(anchor_train, pos_train, neg_train, anchor_test, pos_test, neg_test)
+        temp = np.arange(0,39)
+        idx_ = []
+
+        if d != -1:
+            for i in temp:
+                if i not in self.drop[d]:
+                    idx_.append(i)
+
+            anchor_train = anchor_train[:, idx_, :]
+            pos_train = pos_train[:, idx_, :]
+            neg_train = neg_train[:, idx_, :]
+
+            anchor_test = anchor_test[:, idx_, :]
+            pos_test = pos_test[:, idx_, :]
+            neg_test = neg_test[:, idx_, :]
+
+        size = anchor_train.shape[1] - 1
+        return(anchor_train, pos_train, neg_train, anchor_test, pos_test, neg_test, size)
+
+
 
 
 class DataProcess(DataExtraction):
@@ -118,17 +138,18 @@ class DataProcess(DataExtraction):
         self.anchor = anchor
         self.pos = positive
         self.neg = negative
+
+
      
 
     def __len__(self):
         return len(self.anchor)
 
     def __getitem__(self, idx):
-        x_anchor = self.anchor[idx, :9, :]
-        x_pos = self.pos[idx, :9, :]
-        x_neg = self.neg[idx, :9, :]
-        y_anchor = self.anchor[idx, 9, :]
-        print(y_anchor)
+        x_anchor = self.anchor[idx, :-1, :]
+        x_pos = self.pos[idx, :-1, :]
+        x_neg = self.neg[idx, :-1, :]
+        y_anchor = self.anchor[idx, -1, :]
 
         return x_anchor, x_pos, x_neg, y_anchor
 

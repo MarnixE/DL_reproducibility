@@ -27,9 +27,9 @@ kernel_size = 16
 stride = 1
 dropout = 0.1
 
-# Load model
-model = tcn.TCN(input_size, n_channels, kernel_size, stride, dropout, n_outputs)
-# model.cuda()
+
+
+
 
 
 # summary(model, (38, 1000), device='cuda') # (in_channels, height, width)
@@ -38,8 +38,15 @@ model = tcn.TCN(input_size, n_channels, kernel_size, stride, dropout, n_outputs)
 
 # Split data
 d_split = data_process.Data_preProcess()
+drop = -1
+anchor_train, pos_train, neg_train, anchor_test, pos_test, neg_test, input_size = d_split.get_split(drop)
 
-anchor_train, pos_train, neg_train, anchor_test, pos_test, neg_test = d_split.get_split()
+n_channels = [input_size, input_size, input_size, input_size, input_size]
+n_outputs = input_size
+# Load model
+model = tcn.TCN(input_size, n_channels, kernel_size, stride, dropout, n_outputs)
+# model.cuda()
+
 
 d_train = data_process.DataProcess(anchor_train, pos_train, neg_train)
 d_test = data_process.DataProcess(anchor_test ,pos_test ,neg_test)
