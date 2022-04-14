@@ -7,9 +7,9 @@ import os
 from torchvision import transforms
 import numpy as np
 
-class DataProcess(DataExtraction):
+
+class Data_preProcess(DataExtraction):
     def __init__(self):
-        # self.all_data = DataExtraction().extract()
         current_path = os.getcwd()
         file_path_anchor = current_path + "/drive2vec/data/dataset/triplet_data/anchor0.csv"
         file_path_pos = current_path + "/drive2vec/data/dataset/triplet_data/positive0.csv"
@@ -19,8 +19,8 @@ class DataProcess(DataExtraction):
         self.pos_data = pd.read_csv(file_path_pos)
         self.neg_data = pd.read_csv(file_path_neg)
 
+    def preprocess(self):
         def split_samples(in_array):
-
             list_samples = []
 
             split_idx = 0
@@ -38,7 +38,7 @@ class DataProcess(DataExtraction):
 
             # Remove empty first entry and 10th because its size doesn't match (only 323 data points)
             list_samples.pop(0)
-            list_samples.pop(10)
+            # list_samples.pop(10)
             
             # Convert to 3D array
             split_array = np.dstack(list_samples)
@@ -50,42 +50,72 @@ class DataProcess(DataExtraction):
         array_pos = self.pos_data.to_numpy()
         array_neg = self.neg_data.to_numpy()
 
-        # Split acnhor
+        # Split anchor
         self.split_anchor = split_samples(array_anchor)
 
 
         # Split pos and neg
-        array_pos = array_pos[0:18000, 1:10]
+        array_pos = array_pos[0:18000, 30:40]
         split_pos = array_pos.reshape(18, -1, array_pos.shape[1])
         self.split_pos = np.transpose(split_pos, (0, 2, 1))
 
-        array_neg = array_neg[0:18000, 1:10]
+        array_neg = array_neg[0:18000, 30:40]
         split_neg = array_neg.reshape(18, -1, array_neg.shape[1])
         self.split_neg = np.transpose(split_neg, (0, 2, 1))
+    
+    def get_split(self):
+        self.preprocess()
+
+        anchor = self.split_anchor
+        positive = self.split_pos
+        negative = self.split_neg
+
+        # 18*10*1000
+        # 90*10*200
+
+        anchor = anchor.reshape(180, 1000)
+        positive = positive.reshape(180, 1000)
+        negative = negative.reshape(180, 1000)
+
+        anchor = anchor.reshape(90, 10, 200)
+        positive = positive.reshape(90, 10, 200)
+        negative = negative.reshape(90, 10, 200)
 
 
-        
+        indices = np.random.permutation(anchor.shape[0])
+        train_idx, test_idx = indices[:70], indices[70:]
+
+        anchor_train = anchor[train_idx, :, :]
+        pos_train = positive[train_idx, :, :]
+        neg_train = negative[train_idx, :, :]
+
+        anchor_test = anchor[test_idx, :, :]
+        pos_test = positive[test_idx, :, :]
+        neg_test = negative[test_idx, :, :]
+
+
+        return(anchor_train, pos_train, neg_train, anchor_test, pos_test, neg_test)
+
+
+
+
+class DataProcess(DataExtraction):
+    def __init__(self, anchor, positive, negative):
+        self.anchor = anchor
+        self.pos = positive
+        self.neg = negative
+     
 
     def __len__(self):
-        return len(self.split_anchor)
+        return len(self.anchor)
 
     def __getitem__(self, idx):
-        x_anchor = self.split_anchor[idx, :9, :]
-        x_pos = self.split_pos[idx, :9, :]
-        x_neg = self.split_neg[idx, :9, :]
-        y_anchor = self.split_anchor[idx, 9, :]
+        x_anchor = self.anchor[idx, :9, :]
+        x_pos = self.pos[idx, :9, :]
+        x_neg = self.neg[idx, :9, :]
+        y_anchor = self.anchor[idx, 9, :]
 
-        # x_anchor = np.array(x_anchor, dtype=np.float64)
-        
-        # x_anchor = torch.Tensor(x_anchor)
-        # x_pos = torch.Tensor(x_pos)
-        # x_neg = torch.Tensor(x_neg)
-        # y_anchor = torch.Tensor(y_anchor)
-
-        # x_anchor = torch.from_numpy(x_anchor.to_numpy())
-        # x_pos = torch.from_numpy(x_pos.to_numpy())
-        # x_neg = torch.from_numpy(x_neg.to_numpy())
-        # y_anchor = torch.from_numpy(y_anchor)
+        print(y_anchor)
 
         return x_anchor, x_pos, x_neg, y_anchor
 

@@ -12,6 +12,8 @@ import numpy as np
 from IPython.display import display
 from torchsummary import summary
 import matplotlib.pyplot as plt
+from torch.utils.data.sampler import SubsetRandomSampler, SequentialSampler 
+
 
 torch.manual_seed(2020)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -34,10 +36,15 @@ model.cuda()
 # print(model)
 
 
-# Load data
-dp = data_process.DataProcess()
+# Split data
+d_split = data_process.Data_preProcess()
 
-train_loader = DataLoader(dp, batch_size=18, shuffle=True)
+anchor_train, pos_train, neg_train, anchor_test, pos_test, neg_test = d_split.get_split()
+
+dp = data_process.DataProcess(anchor_train, pos_train, neg_train)
+
+train_loader = DataLoader(dp, batch_size=65, shuffle=True)
+
 
 train_features, train_pos, train_neg,  train_labels = next(iter(train_loader))
 
@@ -127,8 +134,6 @@ def train_model():
 
         for step, (anchor_point, pos_point, neg_point, anchor_label) in enumerate(train_loader):
             
-            
-            
             anchor_point = anchor_point.to(device, dtype=torch.float)
             pos_point = pos_point.to(device, dtype=torch.float)
             neg_point = neg_point.to(device, dtype=torch.float)
@@ -145,7 +150,9 @@ def train_model():
 
             running_loss.append(loss.cpu().detach().numpy())
 
-            clf.classifier(anchor_out, anchor_label[:, 0])
+            clf_in = torch.cat((anchor_out, haar_out), 1)
+
+            clf.classifier(clf_in, anchor_label[:, 0])
 
         # train_acc = 100*evaluate_accuracy(train_loader, model.to(device))
         # train_accs.append(train_acc)
