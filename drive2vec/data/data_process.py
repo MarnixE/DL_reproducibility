@@ -11,9 +11,9 @@ import numpy as np
 class Data_preProcess(DataExtraction):
     def __init__(self):
         current_path = os.getcwd()
-        file_path_anchor = current_path + "/drive2vec/data/dataset/triplet_data/anchor0.csv"
-        file_path_pos = current_path + "/drive2vec/data/dataset/triplet_data/positive0.csv"
-        file_path_neg = current_path + "/drive2vec/data/dataset/triplet_data/negative0.csv"
+        file_path_anchor = current_path + "/data/dataset/triplet_data/anchor0.csv"
+        file_path_pos = current_path + "/data/dataset/triplet_data/positive0.csv"
+        file_path_neg = current_path + "/data/dataset/triplet_data/negative0.csv"
         
         self.anchor_data = pd.read_csv(file_path_anchor)
         self.pos_data = pd.read_csv(file_path_pos)

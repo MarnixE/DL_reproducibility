@@ -41,17 +41,21 @@ class lightGBClassifier:
         d_train=lgb.Dataset(X_train, label=y_train)
 
 
-        if test == False: 
-            clf=lgb.train(params,d_train)
+        # if test == False:
+        self.clf = lgb.train(params,d_train)
 
-        if test == True:
-            y_pred=clf.predict(X_train)
-            y_pred = np.argmax(y_pred,axis=1)
-
-            accuracy = accuracy_score(y_pred, y_test)
-            print('LightGBM Model accuracy score: {0:0.4f}'.format(accuracy))
+        # if test == True:
+        # y_pred=clf.predict(X_train)
+        # y_pred = np.argmax(y_pred,axis=1)
 
 
+
+    def predict(self,X_test, y_test):
+        y_pred = self.clf.predict(X_test)
+        y_pred = np.argmax(y_pred, axis=1)
+
+        accuracy = accuracy_score(y_pred, y_test)
+        print('LightGBM Model accuracy score: {0:0.4f}'.format(accuracy))
         
 
         # clf.fit(X_train, y_train)
@@ -76,4 +80,5 @@ class lightGBClassifier:
         # return(y_pred)
 
         
+
 

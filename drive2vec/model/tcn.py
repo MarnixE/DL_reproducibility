@@ -126,11 +126,10 @@ class TCN(nn.Module):
         haar_features = self.haar_wavelet(haar_input)
         # print(haar_features.shape)
 
-        haar_features= torch.from_numpy(haar_features).cuda()
+        haar_features= torch.from_numpy(haar_features).float()#.cuda()
         # print(haar_features.size())
 
         # haar_out = self.wv_linear(haar_features)
-
         haar_out = self.haar_bn(haar_features[:, :, -1])
 
         return output, haar_out

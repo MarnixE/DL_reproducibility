@@ -29,7 +29,7 @@ dropout = 0.1
 
 # Load model
 model = tcn.TCN(input_size, n_channels, kernel_size, stride, dropout, n_outputs)
-model.cuda()
+# model.cuda()
 
 
 # summary(model, (38, 1000), device='cuda') # (in_channels, height, width)
@@ -88,7 +88,7 @@ criterion = torch.jit.script(triplet_loss.TripletLoss())
 clf = light_gb.lightGBClassifier(learning_rate=0.1)
 
 # Training parameters
-epochs = 50
+epochs = 100
 
 train_accs = []
 running_loss = []
@@ -128,7 +128,7 @@ def train_model():
 
 train_model()
 
-
+print("Training Done")
 # # Save model
 torch.save(model.state_dict(), "train_model.pth")
 
@@ -146,8 +146,9 @@ def test_model():
             anchor_out, haar_out = model(anchor_point)
 
             clf_in = torch.cat((anchor_out, haar_out), 1)
+            clf_in = clf_in.detach().numpy()
 
-            clf.classifier(clf_in, anchor_label[:, 0], test = True)
+            clf.predict(clf_in, anchor_label[:, 0])
 
 
 test_model()
