@@ -1,7 +1,9 @@
-from model import tcn, triplet_loss, light_gb
+from model import tcn, triplet_loss, light_gb, full_connected
 from data import data_process
+from utils import haars_wavelet
 import pandas as pd
 import torch
+import os
 import torch.nn as nn
 from torch.utils.data import DataLoader , TensorDataset
 import torch.optim as optim
@@ -25,7 +27,7 @@ dropout = 0.1
 
 # Load model
 model = tcn.TCN(input_size, n_channels, kernel_size, stride, dropout, n_outputs)
-model.cuda()
+# model.cuda()
 
 
 # summary(model, (38, 1000), device='cuda') # (in_channels, height, width)
@@ -34,9 +36,11 @@ model.cuda()
 
 # Load data
 dp = data_process.DataProcess()
+
 train_loader = DataLoader(dp, batch_size=18, shuffle=True)
 
 train_features, train_pos, train_neg,  train_labels = next(iter(train_loader))
+
 print(f"Feature batch shape: {train_features.size()}")
 print(f"Labels batch shape: {train_labels.size()}")
 
@@ -66,56 +70,91 @@ def evaluate_accuracy(data_loader, net, device=device):
             n += y.shape[0] #increases with the number of samples in the batch
     return acc_sum.item()/n
 
+#haar wavelet
+# dp_haar=data_process.DataProcess()
+# train_loader = DataLoader(dp_haar)
+#
+# train_features, _, _, _= next(iter(train_loader))
+# print(train_features.shape)
+# x_anchor= data_process.DataProcess.split_samples
+# split_anchor = split_samples(array_anchor)
+# print(train_loader.shape)
 
-# Loss function and optimizer
-optimizer = optim.Adam(model.parameters(), lr=0.001)
-criterion = torch.jit.script(triplet_loss.TripletLoss())
+# current_path = os.getcwd()
+# file_path_anchor = current_path + "/drive2vec/data/dataset/triplet_data/anchor0.csv"
+# anchor_data = pd.read_csv(file_path_anchor)
+# anchor_data=anchor_data.to_numpy()
 
-# Classifier
-clf = light_gb.lightGBClassifier(learning_rate=0.1)
 
-# Training parameters
-epochs = 500
+haar_feat = train_features.numpy()
+d0=haar_feat.shape[0]
+d1=haar_feat.shape[1]
+d2=haar_feat.shape[2]
 
-train_accs = []
-running_loss = []
+haar_feat= haar_feat.reshape(d0*d2,d1)
+print(train_features.shape)
+# print(haar_feat.shape)
+haar_features = haars_wavelet.haar_wavelet(np.array(train_features, dtype=np.float32))
+haar_features= torch.from_numpy(haar_features)
+print(haar_features.shape)
 
-def train_model():
-    # Training loop
-    for epoch in range(epochs):
-        running_loss = []
-        model.train()
-        
-        for step, (anchor_point, pos_point, neg_point, anchor_label) in enumerate(train_loader):
-            anchor_point = anchor_point.to(device, dtype=torch.float)
-            pos_point = pos_point.to(device, dtype=torch.float)
-            neg_point = neg_point.to(device, dtype=torch.float)
-            
-            optimizer.zero_grad()
-
-            anchor_out = model(anchor_point)
-            positive_out = model(pos_point)
-            negative_out = model(neg_point)
-
-            loss = criterion(anchor_out, positive_out, negative_out)
-            loss.backward()
-            optimizer.step()
-            
-            running_loss.append(loss.cpu().detach().numpy())
-            
-            clf.classifier(anchor_out, anchor_label[:, 0])
-
-        # train_acc = 100*evaluate_accuracy(train_loader, model.to(device))
-        # train_accs.append(train_acc)
-        print("Epoch: {}/{} - Loss: {:.4f}".format(epoch+1, epochs, np.mean(running_loss)))
-        # print('Accuracy of train set: {:.00f}%'.format(train_acc))
-        print('')
+in_=18
+out_=1
+fc_model= full_connected.NeuralNet(in_,out_)
+output=fc_model(haar_features)
+print(output.shape)
 
 
 
-
-
-train_model()
+# # Loss function and optimizer
+# optimizer = optim.Adam(model.parameters(), lr=0.001)
+# criterion = torch.jit.script(triplet_loss.TripletLoss())
+#
+# # Classifier
+# clf = light_gb.lightGBClassifier(learning_rate=0.1)
+#
+# # Training parameters
+# epochs = 500
+#
+# train_accs = []
+# running_loss = []
+#
+# def train_model():
+#     # Training loop
+#     for epoch in range(epochs):
+#         running_loss = []
+#         model.train()
+#
+#         for step, (anchor_point, pos_point, neg_point, anchor_label) in enumerate(train_loader):
+#             anchor_point = anchor_point.to(device, dtype=torch.float)
+#             pos_point = pos_point.to(device, dtype=torch.float)
+#             neg_point = neg_point.to(device, dtype=torch.float)
+#
+#             optimizer.zero_grad()
+#
+#             anchor_out = model(anchor_point)
+#             positive_out = model(pos_point)
+#             negative_out = model(neg_point)
+#
+#             loss = criterion(anchor_out, positive_out, negative_out)
+#             loss.backward()
+#             optimizer.step()
+#
+#             running_loss.append(loss.cpu().detach().numpy())
+#
+#             clf.classifier(anchor_out, anchor_label[:, 0])
+#
+#         # train_acc = 100*evaluate_accuracy(train_loader, model.to(device))
+#         # train_accs.append(train_acc)
+#         print("Epoch: {}/{} - Loss: {:.4f}".format(epoch+1, epochs, np.mean(running_loss)))
+#         # print('Accuracy of train set: {:.00f}%'.format(train_acc))
+#         print('')
+#
+#
+#
+#
+#
+# train_model()
 
 
 
