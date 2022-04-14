@@ -1,4 +1,4 @@
-from model import tcn, triplet_loss, light_gb, full_connected
+from model import tcn, triplet_loss, light_gb
 from data import data_process
 from utils import haars_wavelet
 import pandas as pd
@@ -27,7 +27,7 @@ dropout = 0.1
 
 # Load model
 model = tcn.TCN(input_size, n_channels, kernel_size, stride, dropout, n_outputs)
-# model.cuda()
+model.cuda()
 
 
 # summary(model, (38, 1000), device='cuda') # (in_channels, height, width)
@@ -86,23 +86,23 @@ def evaluate_accuracy(data_loader, net, device=device):
 # anchor_data=anchor_data.to_numpy()
 
 
-haar_feat = train_features.numpy()
-d0=haar_feat.shape[0]
-d1=haar_feat.shape[1]
-d2=haar_feat.shape[2]
+# haar_feat = train_features.numpy()
+# d0=haar_feat.shape[0]
+# d1=haar_feat.shape[1]
+# d2=haar_feat.shape[2]
 
-haar_feat= haar_feat.reshape(d0*d2,d1)
-print(train_features.shape)
-# print(haar_feat.shape)
-haar_features = haars_wavelet.haar_wavelet(np.array(train_features, dtype=np.float32))
-haar_features= torch.from_numpy(haar_features)
-print(haar_features.shape)
+# haar_feat= haar_feat.reshape(d0*d2,d1)
+# print(train_features.shape)
+# # print(haar_feat.shape)
+# haar_features = haars_wavelet.haar_wavelet(np.array(train_features, dtype=np.float32))
+# haar_features= torch.from_numpy(haar_features)
+# print(haar_features.shape)
 
-in_=18
-out_=1
-fc_model= full_connected.NeuralNet(in_,out_)
-output=fc_model(haar_features)
-print(output.shape)
+# in_=18
+# out_=1
+# fc_model= full_connected.NeuralNet(in_,out_)
+# output=fc_model(haar_features)
+# print(output.shape)
 
 
 
@@ -132,14 +132,11 @@ def train_model():
 
             optimizer.zero_grad()
 
-            anchor_out = model(anchor_point)
+            anchor_out, haar_out = model(anchor_point)
             positive_out = model(pos_point)
             negative_out = model(neg_point)
 
-            haar_features = haars_wavelet.haar_wavelet(np.array(anchor_point.numpy(), dtype=np.float32))
-            haar_features= torch.from_numpy(haar_features)
-
-            
+            print(haar_out.size)
 
             loss = criterion(anchor_out, positive_out, negative_out)
             loss.backward()
@@ -159,7 +156,7 @@ def train_model():
 
 
 
-# train_model()
+train_model()
 
 
 
