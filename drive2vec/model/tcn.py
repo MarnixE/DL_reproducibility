@@ -67,6 +67,10 @@ class TCN_net(nn.Module):
         return self.network(x)
 
 
+
+
+
+
 # Complete TCN Model
 class TCN(nn.Module):
     def __init__(self, input_channels, n_channels, kernel_size, stride, dropout, n_outputs):
@@ -81,13 +85,17 @@ class TCN(nn.Module):
         # Init final linear layer
         self.linear = nn.Linear(n_channels[-1], n_outputs)
 
-        # ADD WAVELET + FC
+        # Wavelet FC layer
+        self.wv_linear = nn.Linear(n_channels[-1]*2, n_outputs)
+
+    def haar(self, x):
+        return 0
 
     def forward(self, x):
         y = self.tcn(x)
-
         y_norm = self.input_bn(y[:, :, -1])
-
         output = self.linear(y_norm)
+
+        haar_features = haars_wavelet.haar_wavelet(np.array(anchor_point.numpy(), dtype=np.float32))
 
         return output

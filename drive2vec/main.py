@@ -106,54 +106,59 @@ print(output.shape)
 
 
 
-# # Loss function and optimizer
-# optimizer = optim.Adam(model.parameters(), lr=0.001)
-# criterion = torch.jit.script(triplet_loss.TripletLoss())
-#
-# # Classifier
-# clf = light_gb.lightGBClassifier(learning_rate=0.1)
-#
-# # Training parameters
-# epochs = 500
-#
-# train_accs = []
-# running_loss = []
-#
-# def train_model():
-#     # Training loop
-#     for epoch in range(epochs):
-#         running_loss = []
-#         model.train()
-#
-#         for step, (anchor_point, pos_point, neg_point, anchor_label) in enumerate(train_loader):
-#             anchor_point = anchor_point.to(device, dtype=torch.float)
-#             pos_point = pos_point.to(device, dtype=torch.float)
-#             neg_point = neg_point.to(device, dtype=torch.float)
-#
-#             optimizer.zero_grad()
-#
-#             anchor_out = model(anchor_point)
-#             positive_out = model(pos_point)
-#             negative_out = model(neg_point)
-#
-#             loss = criterion(anchor_out, positive_out, negative_out)
-#             loss.backward()
-#             optimizer.step()
-#
-#             running_loss.append(loss.cpu().detach().numpy())
-#
-#             clf.classifier(anchor_out, anchor_label[:, 0])
-#
-#         # train_acc = 100*evaluate_accuracy(train_loader, model.to(device))
-#         # train_accs.append(train_acc)
-#         print("Epoch: {}/{} - Loss: {:.4f}".format(epoch+1, epochs, np.mean(running_loss)))
-#         # print('Accuracy of train set: {:.00f}%'.format(train_acc))
-#         print('')
-#
-#
-#
-#
-#
+# Loss function and optimizer
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+criterion = torch.jit.script(triplet_loss.TripletLoss())
+
+# Classifier
+clf = light_gb.lightGBClassifier(learning_rate=0.1)
+
+# Training parameters
+epochs = 500
+
+train_accs = []
+running_loss = []
+
+def train_model():
+    # Training loop
+    for epoch in range(epochs):
+        running_loss = []
+        model.train()
+
+        for step, (anchor_point, pos_point, neg_point, anchor_label) in enumerate(train_loader):
+            anchor_point = anchor_point.to(device, dtype=torch.float)
+            pos_point = pos_point.to(device, dtype=torch.float)
+            neg_point = neg_point.to(device, dtype=torch.float)
+
+            optimizer.zero_grad()
+
+            anchor_out = model(anchor_point)
+            positive_out = model(pos_point)
+            negative_out = model(neg_point)
+
+            haar_features = haars_wavelet.haar_wavelet(np.array(anchor_point.numpy(), dtype=np.float32))
+            haar_features= torch.from_numpy(haar_features)
+
+            
+
+            loss = criterion(anchor_out, positive_out, negative_out)
+            loss.backward()
+            optimizer.step()
+
+            running_loss.append(loss.cpu().detach().numpy())
+
+            clf.classifier(anchor_out, anchor_label[:, 0])
+
+        # train_acc = 100*evaluate_accuracy(train_loader, model.to(device))
+        # train_accs.append(train_acc)
+        print("Epoch: {}/{} - Loss: {:.4f}".format(epoch+1, epochs, np.mean(running_loss)))
+        # print('Accuracy of train set: {:.00f}%'.format(train_acc))
+        print('')
+
+
+
+
+
 # train_model()
 
 
