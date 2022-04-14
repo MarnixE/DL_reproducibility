@@ -18,8 +18,7 @@ class lightGBClassifier:
 
 
 
-
-    def classifier(self, X_train, y_train):
+    def classifier(self, X_train, y_train, test = False):
         X_train = X_train.cpu().detach().numpy()
         # X_train.detach().numpy()
         
@@ -41,19 +40,29 @@ class lightGBClassifier:
         # clf = lgb.LGBMClassifier(learning_rate=self.learning_rate, max_depth=self.max_depth, random_state= self.random_state, metric="multi_logloss")
         d_train=lgb.Dataset(X_train, label=y_train)
 
-        
-        clf=lgb.train(params,d_train)
+
+        if test == False: 
+            clf=lgb.train(params,d_train)
+
+        if test == True:
+            y_pred=clf.predict(X_train)
+            y_pred = np.argmax(y_pred,axis=1)
+
+            accuracy = accuracy_score(y_pred, y_test)
+            print('LightGBM Model accuracy score: {0:0.4f}'.format(accuracy))
+
 
         
+
         # clf.fit(X_train, y_train)
 
         # predict the results
         # y_pred=clf.predict(self.X_test)
 
         # JUST FOR TESTING ...
-        y_pred=clf.predict(X_train)
+        # y_pred=clf.predict(X_train)
         # print(y_pred)
-        y_pred = np.argmax(y_pred,axis=1)
+        # y_pred = np.argmax(y_pred,axis=1)
         
         # print(y_pred)
         # print(y_train)
@@ -62,6 +71,9 @@ class lightGBClassifier:
 
         # accuracy = accuracy_score(self.y_pred, self.y_test)
         # print(y_pred)
-        accuracy = accuracy_score(y_pred, y_train)
-        print('LightGBM Model accuracy score: {0:0.4f}'.format(accuracy))
-        return(y_pred)
+        # accuracy = accuracy_score(y_pred, y_train)
+        # print('LightGBM Model accuracy score: {0:0.4f}'.format(accuracy))
+        # return(y_pred)
+
+        
+

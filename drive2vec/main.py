@@ -41,9 +41,11 @@ d_split = data_process.Data_preProcess()
 
 anchor_train, pos_train, neg_train, anchor_test, pos_test, neg_test = d_split.get_split()
 
-dp = data_process.DataProcess(anchor_train, pos_train, neg_train)
+d_train = data_process.DataProcess(anchor_train, pos_train, neg_train)
+d_test = data_process.DataProcess(anchor_test ,pos_test ,neg_test)
 
-train_loader = DataLoader(dp, batch_size=65, shuffle=True)
+train_loader = DataLoader(d_train, batch_size=65, shuffle=True)
+test_loader = DataLoader(d_test, batch_size=20, shuffle=True)
 
 
 train_features, train_pos, train_neg,  train_labels = next(iter(train_loader))
@@ -77,41 +79,6 @@ def evaluate_accuracy(data_loader, net, device=device):
             n += y.shape[0] #increases with the number of samples in the batch
     return acc_sum.item()/n
 
-#haar wavelet
-# dp_haar=data_process.DataProcess()
-# train_loader = DataLoader(dp_haar)
-#
-# train_features, _, _, _= next(iter(train_loader))
-# print(train_features.shape)
-# x_anchor= data_process.DataProcess.split_samples
-# split_anchor = split_samples(array_anchor)
-# print(train_loader.shape)
-
-# current_path = os.getcwd()
-# file_path_anchor = current_path + "/drive2vec/data/dataset/triplet_data/anchor0.csv"
-# anchor_data = pd.read_csv(file_path_anchor)
-# anchor_data=anchor_data.to_numpy()
-
-
-# haar_feat = train_features.numpy()
-# d0=haar_feat.shape[0]
-# d1=haar_feat.shape[1]
-# d2=haar_feat.shape[2]
-
-# haar_feat= haar_feat.reshape(d0*d2,d1)
-# print(train_features.shape)
-# # print(haar_feat.shape)
-# haar_features = haars_wavelet.haar_wavelet(np.array(train_features, dtype=np.float32))
-# haar_features= torch.from_numpy(haar_features)
-# print(haar_features.shape)
-
-# in_=18
-# out_=1
-# fc_model= full_connected.NeuralNet(in_,out_)
-# output=fc_model(haar_features)
-# print(output.shape)
-
-
 
 # Loss function and optimizer
 optimizer = optim.Adam(model.parameters(), lr=0.001)
@@ -121,7 +88,7 @@ criterion = torch.jit.script(triplet_loss.TripletLoss())
 clf = light_gb.lightGBClassifier(learning_rate=0.1)
 
 # Training parameters
-epochs = 500
+epochs = 50
 
 train_accs = []
 running_loss = []
@@ -153,48 +120,35 @@ def train_model():
             clf_in = torch.cat((anchor_out, haar_out), 1)
 
             clf.classifier(clf_in, anchor_label[:, 0])
+            
 
-        # train_acc = 100*evaluate_accuracy(train_loader, model.to(device))
-        # train_accs.append(train_acc)
         print("Epoch: {}/{} - Loss: {:.4f}".format(epoch+1, epochs, np.mean(running_loss)))
-        # print('Accuracy of train set: {:.00f}%'.format(train_acc))
         print('')
-
-
 
 
 train_model()
 
 
+# # Save model
+torch.save(model.state_dict(), "train_model.pth")
 
 
-# Save model
-# torch.save({"model_state_dict": model.state_dict(),
-#             "optimzier_state_dict": optimizer.state_dict()
-#            }, "trained_model.pth")
+# model.load_state_dict(torch.load("train_model.pth"))
+
+def test_model():
+    for step, (anchor_point, pos_point, neg_point, anchor_label) in enumerate(test_loader):
+            
+            anchor_point = anchor_point.to(device, dtype=torch.float)
+            pos_point = pos_point.to(device, dtype=torch.float)
+            neg_point = neg_point.to(device, dtype=torch.float)
 
 
+            anchor_out, haar_out = model(anchor_point)
 
-# # Evaluate model
-# train_results = []
-# labels = []
+            clf_in = torch.cat((anchor_out, haar_out), 1)
 
-# model.eval()
-# with torch.no_grad():
-#     for anchor, _, _, label in train_loader:
-#         train_results.append(model(anchor.to(device, dtype=torch.float)).cpu().numpy())
-#         labels.append(label)
-        
-# train_results = np.concatenate(train_results)
-# labels = np.concatenate(labels)
-# train_results.shape
+            clf.classifier(clf_in, anchor_label[:, 0], test = True)
 
-# print(labels)
 
-# plt.figure(figsize=(15, 10), facecolor="azure")
-# for label in np.unique(labels):
-#     tmp = train_results[labels==label]
-#     plt.scatter(tmp[:, 0], tmp[:, 1], label=label)
+test_model()
 
-# plt.legend()
-# plt.show()
