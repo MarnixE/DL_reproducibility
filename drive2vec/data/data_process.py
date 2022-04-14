@@ -11,9 +11,9 @@ import numpy as np
 class Data_preProcess(DataExtraction):
     def __init__(self):
         current_path = os.getcwd()
-        file_path_anchor = current_path + "/drive2vec/data/dataset/triplet_data/anchor0.csv"
-        file_path_pos = current_path + "/drive2vec/data/dataset/triplet_data/positive0.csv"
-        file_path_neg = current_path + "/drive2vec/data/dataset/triplet_data/negative0.csv"
+        file_path_anchor = current_path + "/driver2vec/data/dataset/triplet_data/anchor0.csv"
+        file_path_pos = current_path + "/driver2vec/data/dataset/triplet_data/positive0.csv"
+        file_path_neg = current_path + "/driver2vec/data/dataset/triplet_data/negative0.csv"
         
         self.anchor_data = pd.read_csv(file_path_anchor)
         self.pos_data = pd.read_csv(file_path_pos)
@@ -72,14 +72,26 @@ class Data_preProcess(DataExtraction):
 
         # 18*10*1000
         # 90*10*200
+        anchor_temp = np.zeros((90,10,200))
+        p_temp = np.zeros((90,10,200))
+        n_temp = np.zeros((90,10,200))
+        for i in range(5):
+            for j in range(18):
+                anchor_temp[i*j,:,:] = anchor[j,:,i*200:(i+1)*200]
+                p_temp[i*j,:,:] = positive[j,:,i*200:(i+1)*200]
+                n_temp[i*j,:,:] = negative[j,:,i*200:(i+1)*200]
 
-        anchor = anchor.reshape(180, 1000)
-        positive = positive.reshape(180, 1000)
-        negative = negative.reshape(180, 1000)
 
-        anchor = anchor.reshape(90, 10, 200)
-        positive = positive.reshape(90, 10, 200)
-        negative = negative.reshape(90, 10, 200)
+        anchor = anchor_temp
+        positive = p_temp
+        negative = n_temp
+        # anchor = anchor.reshape(180, 1000)
+        # positive = positive.reshape(180, 1000)
+        # negative = negative.reshape(180, 1000)
+        #
+        # anchor = anchor.reshape(90, 10, 200)
+        # positive = positive.reshape(90, 10, 200)
+        # negative = negative.reshape(90, 10, 200)
 
 
         indices = np.random.permutation(anchor.shape[0])
