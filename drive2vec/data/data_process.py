@@ -70,10 +70,11 @@ class Data_preProcess(DataExtraction):
         self.drop[2] = [6, 19]
         self.drop[3] = [14, 24, 25, 26, 27, 28]
         self.drop[4] = [5, 6]
-        self.drop[5] = [7, 38, ]
+        self.drop[5] = [7, 37]
         self.drop[6] = [33, 34, 35, 36, 37]
         self.drop[7] = [22, 23]
         self.drop[8] = [21, 19]
+        self.drop[9] = [1, 2, 3, 4, 33, 34, 35, 36, 37]
     
     def get_split(self, d):
         self.preprocess()

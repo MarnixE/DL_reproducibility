@@ -38,14 +38,14 @@ dropout = 0.1
 
 # Split data
 d_split = data_process.Data_preProcess()
-drop = -1
+drop = 5
 anchor_train, pos_train, neg_train, anchor_test, pos_test, neg_test, input_size = d_split.get_split(drop)
 
 n_channels = [input_size, input_size, input_size, input_size, input_size]
 n_outputs = input_size
 # Load model
 model = tcn.TCN(input_size, n_channels, kernel_size, stride, dropout, n_outputs)
-# model.cuda()
+model.cuda()
 
 
 d_train = data_process.DataProcess(anchor_train, pos_train, neg_train)
@@ -153,10 +153,9 @@ def test_model():
             anchor_out, haar_out = model(anchor_point)
 
             clf_in = torch.cat((anchor_out, haar_out), 1)
-            clf_in = clf_in.detach().numpy()
+            clf_in = clf_in.cpu().detach().numpy()
 
             clf.predict(clf_in, anchor_label[:, 0])
 
 
 test_model()
-
