@@ -72,9 +72,6 @@ class TCN_net(nn.Module):
 
 
 
-
-
-
 # Complete TCN Model
 class TCN(nn.Module):
     def __init__(self, input_channels, n_channels, kernel_size, stride, dropout, n_outputs):
@@ -86,39 +83,32 @@ class TCN(nn.Module):
         # Init batch normalization
         self.input_bn = nn.BatchNorm1d(n_channels[-1])
 
+        self.haar_bn = nn.BatchNorm1d(n_channels[-1]*2)
+
         # Init final linear layer
         self.linear = nn.Linear(n_channels[-1], n_outputs)
 
         # Wavelet FC layer
         self.wv_linear = nn.Linear(n_channels[-1]*2, n_outputs)
 
-    def haar_wavelet(data):
+    def haar_wavelet(self, data):
         col = data.shape[2]
-        # print("col", col)
         row = data.shape[1]
-        # print("col", row)
         d3= data.shape[0]
-        # print("col", d3)
-        finaldata= np.empty((d3,row*2,col))
-        print(data.shape)
+        finaldata= np.empty([d3,row*2,col])
 
         for j in range(d3):
             new_data=data[j,:,:].copy()
+
             for i in range(row):
-                new_row = data[i,:].copy()
-                print(new_row.shape)
+                new_row = new_data[i,:].copy()
                 (cA, cD) = pywt.dwt(new_row, 'haar')
-                # print(new_col.shape)
-                print(cA.shape)
-                print(cD.shape)
                 new_data1 = np.concatenate((cA,cD),0)
-                print(new_data1.shape)
                 new_data2 = np.reshape(new_data1,(-1,col))
-                print(new_data2.shape)
-                new_data = np.vstack((data,new_data2))
-                print(new_data.shape)
-            finaldata[j,:,:]=new_data
-        print(finaldata.shape)
+                new_data = np.vstack((new_data ,new_data2))
+                
+    
+            finaldata[j,:]=new_data
 
         return finaldata
 
@@ -126,16 +116,21 @@ class TCN(nn.Module):
     def forward(self, x):
         y = self.tcn(x)
         y_norm = self.input_bn(y[:, :, -1])
+
+        # print(y_norm.size())
         output = self.linear(y_norm)
 
-        
         haar_input = x.cpu().detach().numpy()
-        print(haar_input.shape)
+        # print(haar_input.shape)
 
         haar_features = self.haar_wavelet(haar_input)
-        print(haar_features.shape)
+        # print(haar_features.shape)
 
-        haar_features= torch.from_numpy(haar_features)
-        haar_out = self.wv_linear(haar_features)
+        haar_features= torch.from_numpy(haar_features).cuda()
+        # print(haar_features.size())
+
+        # haar_out = self.wv_linear(haar_features)
+
+        haar_out = self.haar_bn(haar_features[:, :, -1])
 
         return output, haar_out

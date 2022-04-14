@@ -19,8 +19,8 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # Model parameters
 n_inputs = 1000
 input_size = 9
-n_channels = [38, 38, 38, 38, 38]
-n_outputs = 38
+n_channels = [9, 9, 9, 9, 9]
+n_outputs = 9
 kernel_size = 16
 stride = 1
 dropout = 0.1
@@ -126,6 +126,9 @@ def train_model():
         model.train()
 
         for step, (anchor_point, pos_point, neg_point, anchor_label) in enumerate(train_loader):
+            
+            
+            
             anchor_point = anchor_point.to(device, dtype=torch.float)
             pos_point = pos_point.to(device, dtype=torch.float)
             neg_point = neg_point.to(device, dtype=torch.float)
@@ -133,10 +136,8 @@ def train_model():
             optimizer.zero_grad()
 
             anchor_out, haar_out = model(anchor_point)
-            positive_out = model(pos_point)
-            negative_out = model(neg_point)
-
-            print(haar_out.size)
+            positive_out, _ = model(pos_point)
+            negative_out, _ = model(neg_point)
 
             loss = criterion(anchor_out, positive_out, negative_out)
             loss.backward()
@@ -151,7 +152,6 @@ def train_model():
         print("Epoch: {}/{} - Loss: {:.4f}".format(epoch+1, epochs, np.mean(running_loss)))
         # print('Accuracy of train set: {:.00f}%'.format(train_acc))
         print('')
-
 
 
 
